@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>::BEFORE SOLUTIONS — Timeline Tracker</title>
+
+  <!-- Fonts matching ::BEFORE SOLUTIONS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <div class="tracker-shell">
+
+    <!-- =========================================================
+         TOP BAR (MATCHES MAIN ::BEFORE SOLUTIONS WEBSITE)
+    ========================================================== -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand-group">
+          <a class="brand" href="../../index.html" aria-label="::BEFORE SOLUTIONS Home">
+            <span class="brand__mark">::BEFORE</span>
+            <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+          </a>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-product">TIMELINE TRACKER</span>
+        </div>
+
+        <div class="meta" aria-label="Live location and time">
+          <span class="meta__item">Zrenjanin, RS</span>
+          <span class="meta__item mono" id="liveClockSeconds">--:--:--</span>
+          <span class="meta__item" id="liveDateLabel">---</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline">
+          <span class="live-dot" aria-hidden="true"></span>
+          <strong id="liveShiftBanner">ACTIVE SHIFT: LOADING...</strong>
+        </span>
+      </div>
+
+      <div class="topbar__right topbar__actions">
+        <button class="tool-pill hover-sound" id="jumpLiveBtn" type="button" title="Jump to current date and active shift">
+          ● LIVE NOW
+        </button>
+        <button class="tool-pill hover-sound" id="soundToggleBtn" type="button" aria-pressed="true" title="Toggle hover audio">
+          SFX: ON
+        </button>
+        <a class="cta hover-sound" href="../../projects.html">← BACK TO PROJECTS</a>
+      </div>
+    </header>
+
+    <!-- =========================================================
+         CONTROL STRIP: SELECTED DATE + 3 SHIFTS + LEGEND
+    ========================================================== -->
+    <section class="shift-bar" aria-label="Shift and date controls">
+      <div class="shift-bar__inner">
+        <div class="shift-tabs" role="tablist" aria-label="Production shifts">
+          <button class="shift-tab hover-sound" type="button" role="tab" data-shift="1" aria-selected="false">
+            <span class="shift-tab__num">SHIFT 01</span>
+            <span class="shift-tab__hours mono">06:00 – 14:00</span>
+          </button>
+          <button class="shift-tab hover-sound" type="button" role="tab" data-shift="2" aria-selected="false">
+            <span class="shift-tab__num">SHIFT 02</span>
+            <span class="shift-tab__hours mono">14:00 – 22:00</span>
+          </button>
+          <button class="shift-tab hover-sound" type="button" role="tab" data-shift="3" aria-selected="false">
+            <span class="shift-tab__num">SHIFT 03</span>
+            <span class="shift-tab__hours mono">22:00 – 06:00</span>
+          </button>
+        </div>
+
+        <div class="shift-bar__right">
+          <div class="legend" aria-label="Timeline color legend">
+            <span class="legend__item"><span class="swatch swatch--work"></span>PRODUCTION WORKING</span>
+            <span class="legend__item"><span class="swatch swatch--error"></span>SYSTEM ERROR / STOP</span>
+            <span class="legend__item"><span class="swatch swatch--lunch"></span>LUNCH BREAK</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         FULL-WIDTH SHIFT TIMELINE STAGE (LEFT TO RIGHT)
+    ========================================================== -->
+    <section class="timeline-stage" aria-labelledby="timelineTitle">
+      <div class="timeline-stage__head">
+        <div>
+          <span class="kicker" id="timelineContextKicker">(→) REAL-TIME SHIFT TIMELINE</span>
+          <h1 class="timeline-stage__title" id="timelineTitle">SHIFT 02 · 14:00 – 22:00</h1>
+        </div>
+
+        <div class="kpi-strip" id="kpiStrip">
+          <div class="kpi-chip">
+            <span class="kpi-chip__label">WORKING</span>
+            <span class="kpi-chip__val kpi-chip__val--work mono" id="kpiWorking">0m</span>
+          </div>
+          <div class="kpi-chip">
+            <span class="kpi-chip__label">ERROR / STOP</span>
+            <span class="kpi-chip__val kpi-chip__val--error mono" id="kpiError">0m</span>
+          </div>
+          <div class="kpi-chip">
+            <span class="kpi-chip__label">LUNCH BREAK</span>
+            <span class="kpi-chip__val kpi-chip__val--lunch mono" id="kpiLunch">0m</span>
+          </div>
+          <div class="kpi-chip">
+            <span class="kpi-chip__label">UPTIME</span>
+            <span class="kpi-chip__val mono" id="kpiUptime">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-bleed edge-to-edge timeline track -->
+      <div class="timeline-wrap">
+        <div class="timeline-hours" id="timelineHours" aria-hidden="true"></div>
+
+        <div class="timeline-track" id="timelineTrack" role="region" aria-label="8-hour shift timeline">
+          <div class="timeline-segments" id="timelineSegments"></div>
+          <div class="timeline-ticks" id="timelineTicks" aria-hidden="true"></div>
+          <div class="timeline-now is-hidden" id="timelineNowCursor" aria-hidden="true">
+            <span class="timeline-now__badge mono" id="timelineNowBadge">NOW</span>
+          </div>
+        </div>
+
+        <div class="timeline-tooltip is-hidden" id="timelineTooltip" role="tooltip"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         MAIN WORKSPACE: LOGGER + CLOCK PICKER + HISTORY CALENDAR
+    ========================================================== -->
+    <main class="workspace">
+      <div class="workspace-grid">
+
+        <!-- LEFT COLUMN: EVENT FORM & SHIFT LOG LIST -->
+        <div class="workspace-main">
+
+          <!-- LOG EVENT FORM WITH FULL MINUTE-PRECISION CLOCK SYSTEM -->
+          <section class="panel" aria-labelledby="formHeading">
+            <header class="panel__head">
+              <div>
+                <span class="kicker">(→) SHIFT LOGGING INTERFACE</span>
+                <h2 class="panel__title" id="formHeading">LOG SHIFT EVENT</h2>
+              </div>
+              <span class="mode-badge mono" id="formModeBadge">NEW ENTRY</span>
+            </header>
+
+            <form class="event-form" id="eventForm" novalidate>
+              <!-- Status / Category Selection -->
+              <div class="status-selector" role="radiogroup" aria-label="Event type">
+                <label class="status-option status-option--error is-selected hover-sound">
+                  <input type="radio" name="eventType" value="error" checked />
+                  <span class="swatch swatch--error"></span>
+                  <span>SYSTEM ERROR / STOP</span>
+                </label>
+
+                <label class="status-option status-option--lunch hover-sound">
+                  <input type="radio" name="eventType" value="lunch" />
+                  <span class="swatch swatch--lunch"></span>
+                  <span>LUNCH BREAK</span>
+                </label>
+
+                <label class="status-option status-option--work hover-sound">
+                  <input type="radio" name="eventType" value="work" />
+                  <span class="swatch swatch--work"></span>
+                  <span>PRODUCTION NOTE</span>
+                </label>
+              </div>
+
+              <!-- Time Inputs + Interactive Full Clock Picker -->
+              <div class="clock-workbench">
+                <div class="time-inputs-col">
+                  <div class="time-card is-focused" id="startTimeCard">
+                    <div class="time-card__head">
+                      <span class="field__label">START TIME (HH:MM)</span>
+                      <button class="btn-mini hover-sound" type="button" data-focus-clock="start">SET ON CLOCK</button>
+                    </div>
+                    <div class="time-card__controls">
+                      <input class="time-input mono" id="startTimeInput" type="text" maxlength="5" placeholder="17:30" aria-label="Start time in HH:MM" />
+                      <div class="nudge-group">
+                        <button class="nudge-btn hover-sound" type="button" data-nudge="start:-1">-1m</button>
+                        <button class="nudge-btn hover-sound" type="button" data-nudge="start:1">+1m</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="time-card" id="endTimeCard">
+                    <div class="time-card__head">
+                      <span class="field__label">END TIME (HH:MM)</span>
+                      <button class="btn-mini hover-sound" type="button" data-focus-clock="end">SET ON CLOCK</button>
+                    </div>
+                    <div class="time-card__controls">
+                      <input class="time-input mono" id="endTimeInput" type="text" maxlength="5" placeholder="18:22" aria-label="End time in HH:MM" />
+                      <div class="nudge-group">
+                        <button class="nudge-btn hover-sound" type="button" data-nudge="end:-1">-1m</button>
+                        <button class="nudge-btn hover-sound" type="button" data-nudge="end:1">+1m</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="duration-preview">
+                    <span class="field__label">SELECTED INTERVAL</span>
+                    <span class="mono duration-preview__val" id="intervalSummary">--:-- → --:-- (0 min)</span>
+                  </div>
+                </div>
+
+                <!-- Interactive SVG Analog/24H + 60-Minute Dial Clock -->
+                <div class="clock-dial-box" aria-label="Interactive full clock selector">
+                  <div class="clock-dial-box__head">
+                    <span class="clock-target-label mono" id="clockTargetLabel">EDITING: START TIME</span>
+                    <div class="clock-mode-tabs">
+                      <button class="clock-mode-btn is-active hover-sound" type="button" id="clockModeHour">HOUR</button>
+                      <button class="clock-mode-btn hover-sound" type="button" id="clockModeMin">MINUTE (00–59)</button>
+                    </div>
+                  </div>
+
+                  <div class="clock-face-wrap">
+                    <svg class="clock-svg" id="clockSvg" viewBox="0 0 240 240" width="224" height="224" role="img" aria-label="Interactive clock dial">
+                      <circle cx="120" cy="120" r="112" class="clock-svg__bg" />
+                      <circle cx="120" cy="120" r="76" class="clock-svg__inner-ring" />
+                      <g id="clockTicksLayer"></g>
+                      <line x1="120" y1="120" x2="120" y2="36" class="clock-svg__hand" id="clockHand" />
+                      <circle cx="120" cy="120" r="5" class="clock-svg__center" />
+                      <circle cx="120" cy="36" r="14" class="clock-svg__knob" id="clockKnob" />
+                      <g id="clockLabelsLayer"></g>
+                    </svg>
+                  </div>
+
+                  <div class="clock-dial-box__foot mono" id="clockReadout">
+                    CLICK OR DRAG DIAL TO SELECT EXACT MINUTE
+                  </div>
+                </div>
+              </div>
+
+              <!-- Comment Input + Quick Presets -->
+              <div class="comment-block">
+                <div class="comment-block__head">
+                  <label class="field__label" for="eventComment">EVENT COMMENT / DESCRIPTION</label>
+                  <div class="quick-presets">
+                    <button class="preset-btn hover-sound" type="button" data-preset-type="error" data-preset-text="Production stopped due to system error">System Error</button>
+                    <button class="preset-btn hover-sound" type="button" data-preset-type="lunch" data-preset-text="Lunch break">Lunch Break</button>
+                    <button class="preset-btn hover-sound" type="button" data-preset-type="work" data-preset-text="Batch calibration & normal line output">Calibration</button>
+                  </div>
+                </div>
+                <input
+                  class="comment-input"
+                  id="eventComment"
+                  type="text"
+                  maxlength="160"
+                  placeholder="e.g. Production stopped due to system error / Lunch break"
+                  required
+                />
+              </div>
+
+              <p class="form-error is-hidden" id="formError" role="alert"></p>
+
+              <div class="form-actions">
+                <button class="btn-ghost is-hidden hover-sound" type="button" id="cancelEditBtn">CANCEL EDIT</button>
+                <button class="btn-primary hover-sound" type="submit" id="submitEventBtn">
+                  <span id="submitEventLabel">ADD TO TIMELINE</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- SHIFT EVENT LOG LIST BELOW -->
+          <section class="panel" aria-labelledby="logHeading">
+            <header class="panel__head">
+              <div>
+                <span class="kicker">(→) SHIFT ACTIVITY RECORD</span>
+                <h2 class="panel__title" id="logHeading">SHIFT EVENT LOG</h2>
+              </div>
+              <div class="panel__head-actions">
+                <span class="count-badge mono" id="logCountBadge">00 ENTRIES</span>
+                <button class="btn-ghost btn-ghost--sm hover-sound" type="button" id="clearShiftBtn">CLEAR SHIFT</button>
+              </div>
+            </header>
+
+            <div class="event-list" id="eventList" role="list"></div>
+
+            <div class="empty-log is-hidden" id="emptyLogState">
+              <span class="mono">NO INTERRUPTIONS LOGGED FOR THIS SHIFT</span>
+              <p>Continuous purple bar represents active production. Use the form above to record system errors, lunch breaks, or production notes.</p>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN: HISTORY CALENDAR & DAY OVERVIEW -->
+        <aside class="workspace-side" aria-label="History calendar">
+          <section class="panel calendar-panel">
+            <header class="panel__head calendar-panel__head">
+              <div>
+                <span class="kicker">(→) PAST DAYS ARCHIVE</span>
+                <h2 class="panel__title" id="calendarMonthTitle">NOVEMBER 2026</h2>
+              </div>
+              <div class="cal-nav">
+                <button class="cal-nav__btn hover-sound" type="button" id="calPrevBtn" aria-label="Previous month">‹</button>
+                <button class="cal-nav__btn hover-sound" type="button" id="calNextBtn" aria-label="Next month">›</button>
+              </div>
+            </header>
+
+            <div class="cal-weekdays" aria-hidden="true">
+              <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+            </div>
+
+            <div class="cal-grid" id="calendarGrid" role="grid" aria-label="Shift history calendar"></div>
+
+            <div class="cal-day-summary" id="calDaySummary"></div>
+          </section>
+        </aside>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="tracker-footer">
+      <div class="fineprint">© 2026 Nemanja Milin — ::BEFORE SOLUTIONS · Timeline Tracker</div>
+      <div class="tracker-footer__meta mono">SHIFTS: 06–14 / 14–22 / 22–06 · LOCAL PERSISTENCE ACTIVE</div>
+    </footer>
+
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>

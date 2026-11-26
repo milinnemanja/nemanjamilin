@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>::BEFORE SOLUTIONS — Tracking System</title>
+
+  <!-- Fonts (source: Google Fonts, matching main site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=DM+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+  <!-- =========================================================
+       VIEW 1: AUTHENTICATION (LOGIN / REGISTER)
+  ========================================================== -->
+  <div class="auth-shell" id="authView">
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand-group">
+          <a class="brand" href="../../index.html" aria-label="::BEFORE SOLUTIONS Home">
+            <span class="brand__mark">::BEFORE</span>
+            <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+          </a>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-product">TRACKING SYSTEM</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline"><strong>WAREHOUSE OPERATIONS — ACCESS PORTAL</strong></span>
+      </div>
+
+      <div class="topbar__right">
+        <a class="cta hover-sound" href="../../projects.html">← BACK TO PROJECTS</a>
+      </div>
+    </header>
+
+    <main class="auth-stage">
+      <section class="auth-card" aria-labelledby="authHeading">
+        <div class="auth-card__head">
+          <div class="brand-group brand-group--card">
+            <div class="brand" aria-label="::BEFORE SOLUTIONS">
+              <span class="brand__mark">::BEFORE</span>
+              <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+            </div>
+            <span class="brand-divider" aria-hidden="true"></span>
+            <span class="brand-product">TRACKING SYSTEM</span>
+          </div>
+
+          <span class="auth-card__kicker">(→) SAMPLE FRONTEND APPLICATION</span>
+          <h1 class="auth-card__title" id="authHeading">SIGN IN TO WAREHOUSE TRACKER</h1>
+        </div>
+
+        <!-- MODE SWITCHER: LOGIN / REGISTER -->
+        <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+          <button
+            class="auth-tab hover-sound is-active"
+            type="button"
+            role="tab"
+            id="tabLogin"
+            aria-selected="true"
+            aria-controls="loginForm"
+            data-auth-tab="login"
+          >
+            LOGIN
+          </button>
+          <button
+            class="auth-tab hover-sound"
+            type="button"
+            role="tab"
+            id="tabRegister"
+            aria-selected="false"
+            aria-controls="registerForm"
+            data-auth-tab="register"
+          >
+            REGISTER
+          </button>
+        </div>
+
+        <!-- LOGIN FORM (Pre-filled admin / admin) -->
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="demo-banner">
+            <span class="demo-banner__dot" aria-hidden="true"></span>
+            <span>DEMO CREDENTIALS PRE-FILLED — USER: <strong>admin</strong> / PASS: <strong>admin</strong></span>
+          </div>
+
+          <label class="field">
+            <span class="field__label">USERNAME</span>
+            <input
+              class="field__input"
+              id="loginUsername"
+              name="username"
+              type="text"
+              value="admin"
+              autocomplete="username"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span class="field__label">PASSWORD</span>
+            <div class="field__pass-wrap">
+              <input
+                class="field__input"
+                id="loginPassword"
+                name="password"
+                type="password"
+                value="admin"
+                autocomplete="current-password"
+                required
+              />
+              <button class="field__toggle hover-sound" type="button" data-toggle-pass="loginPassword">
+                SHOW
+              </button>
+            </div>
+          </label>
+
+          <p class="auth-error" id="loginError" role="alert"></p>
+
+          <button class="btn-primary hover-sound" type="submit">
+            <span>↳ LOGIN TO TRACKING SYSTEM</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <!-- REGISTER FORM (Sample mode) -->
+        <form class="auth-form is-hidden" id="registerForm" novalidate>
+          <div class="demo-banner">
+            <span class="demo-banner__dot" aria-hidden="true"></span>
+            <span>SAMPLE REGISTRATION — CREATES A LOCAL FRONTEND SESSION</span>
+          </div>
+
+          <label class="field">
+            <span class="field__label">FULL NAME</span>
+            <input
+              class="field__input"
+              id="regName"
+              name="fullname"
+              type="text"
+              value="Nemanja Milin"
+              placeholder="Enter your name"
+              required
+            />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">USERNAME</span>
+              <input
+                class="field__input"
+                id="regUsername"
+                name="username"
+                type="text"
+                value="admin"
+                placeholder="Username"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span class="field__label">ROLE</span>
+              <input
+                class="field__input"
+                id="regRole"
+                name="role"
+                type="text"
+                value="Warehouse Lead"
+                placeholder="Role"
+              />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">PASSWORD</span>
+            <div class="field__pass-wrap">
+              <input
+                class="field__input"
+                id="regPassword"
+                name="password"
+                type="password"
+                value="admin"
+                required
+              />
+              <button class="field__toggle hover-sound" type="button" data-toggle-pass="regPassword">
+                SHOW
+              </button>
+            </div>
+          </label>
+
+          <p class="auth-error" id="registerError" role="alert"></p>
+
+          <button class="btn-primary hover-sound" type="submit">
+            <span>↳ REGISTER &amp; ENTER SYSTEM</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <!-- OAUTH SAMPLE PROVIDERS -->
+        <div class="auth-divider">
+          <span>OR CONTINUE WITH</span>
+        </div>
+
+        <div class="oauth-grid">
+          <button class="oauth-btn hover-sound" type="button" data-oauth="Google">
+            <img class="oauth-btn__icon" src="./assets/google.png" alt="Google" />
+            <span>GOOGLE</span>
+          </button>
+
+          <button class="oauth-btn hover-sound" type="button" data-oauth="Apple">
+            <img class="oauth-btn__icon oauth-btn__icon--apple" src="./assets/apple.png" alt="Apple" />
+            <span>APPLE</span>
+          </button>
+        </div>
+
+        <p class="auth-footnote">
+          <strong>*</strong>Interactive frontend preview only. Google and Apple sign-in enter the sample warehouse dashboard directly without external authentication.
+        </p>
+      </section>
+    </main>
+
+    <footer class="projects-footer">
+      <div class="fineprint">© 2026 ::BEFORE SOLUTIONS — Tracking System.</div>
+      <div class="meta" aria-label="Site metadata">
+        <span class="meta__item">LOCATION</span>
+        <span class="meta__item">Zrenjanin, RS</span>
+        <span class="meta__item" data-clock>--:--</span>
+        <span class="meta__item" data-day>---</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =========================================================
+       2-SECOND CONFIRMATION CARD (CENTER OVERLAY)
+  ========================================================== -->
+  <div class="confirm-overlay" id="confirmOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-card">
+      <div class="confirm-card__badge" aria-hidden="true">✓</div>
+      <span class="confirm-card__kicker">(→) ACCESS GRANTED</span>
+      <h2 class="confirm-card__title" id="confirmTitle">LOGIN SUCCESSFUL</h2>
+      <p class="confirm-card__msg" id="confirmMsg">
+        Authenticated as <strong>admin</strong>. Launching warehouse tracking dashboard...
+      </p>
+
+      <div class="confirm-progress" aria-hidden="true">
+        <div class="confirm-progress__fill" id="confirmProgressFill"></div>
+      </div>
+
+      <span class="confirm-card__timer" id="confirmTimer">REDIRECTING IN 2.0S</span>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       VIEW 2: WAREHOUSE TRACKING SYSTEM (SINGLE PAGE APP)
+  ========================================================== -->
+  <div class="page app-shell is-hidden" id="appView">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand-group">
+          <a class="brand" href="../../index.html" aria-label="::BEFORE SOLUTIONS Home">
+            <span class="brand__mark">::BEFORE</span>
+            <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+          </a>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-product">TRACKING SYSTEM</span>
+        </div>
+
+        <div class="meta" aria-label="Site metadata">
+          <span class="meta__item">Zrenjanin, RS</span>
+          <span class="meta__item" data-clock>--:--</span>
+          <span class="meta__item" data-day>---</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline">
+          <span class="live-dot" aria-hidden="true"></span>
+          <strong>WAREHOUSE &amp; ORDER PIPELINE</strong>
+        </span>
+      </div>
+
+      <div class="topbar__right topbar__actions">
+        <span class="operator-pill" id="operatorPill">USER: ADMIN</span>
+        <a class="cta cta--ghost hover-sound" href="../../projects.html">← PROJECTS</a>
+        <button class="cta hover-sound" id="logoutBtn" type="button">↳ LOG OUT</button>
+      </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="tracker-wrap">
+
+      <!-- HERO -->
+      <section class="projects-hero">
+        <div class="projects-hero__row">
+          <div class="projects-hero__copy">
+            <span class="projects-hero__kicker">(→) ::BEFORE SOLUTIONS — TRACKING SYSTEM</span>
+            <h1 class="projects-hero__title">WAREHOUSE STATUS GRID</h1>
+          </div>
+
+          <p class="projects-hero__desc">
+            <strong>*</strong>Real-time inventory and fulfillment overview — track available stock,
+            remaining units needed to complete client orders, active production runs, warehouse inventory,
+            packed batches, and dispatched shipments.
+          </p>
+        </div>
+      </section>
+
+      <!-- 6-CARD KPI OVERVIEW -->
+      <section class="kpi-section" aria-label="Warehouse summary indicators">
+        <div class="kpi-grid">
+          <article class="kpi-card kpi-card--stock">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--stock"></span>IN STOCK</span>
+              <span class="kpi-card__code">INV-01</span>
+            </div>
+            <div class="kpi-card__value" id="kpiStock">0</div>
+            <div class="kpi-card__sub" id="kpiStockSub">WAREHOUSE + PACKED READY</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--stock" id="kpiStockBar"></div></div>
+          </article>
+
+          <article class="kpi-card kpi-card--needed">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--needed"></span>TO FINISH ORDERS</span>
+              <span class="kpi-card__code">ORD-02</span>
+            </div>
+            <div class="kpi-card__value" id="kpiNeeded">0</div>
+            <div class="kpi-card__sub" id="kpiNeededSub">REMAINING UNITS NEEDED</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--needed" id="kpiNeededBar"></div></div>
+          </article>
+
+          <article class="kpi-card kpi-card--production">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--production"></span>IN PRODUCTION</span>
+              <span class="kpi-card__code">STG-01</span>
+            </div>
+            <div class="kpi-card__value" id="kpiProduction">0</div>
+            <div class="kpi-card__sub" id="kpiProductionSub">ACTIVE FLOOR BATCHES</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--production" id="kpiProductionBar"></div></div>
+          </article>
+
+          <article class="kpi-card kpi-card--warehouse">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--warehouse"></span>IN WAREHOUSE</span>
+              <span class="kpi-card__code">STG-02</span>
+            </div>
+            <div class="kpi-card__value" id="kpiWarehouse">0</div>
+            <div class="kpi-card__sub" id="kpiWarehouseSub">STORED ON BAYS</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--warehouse" id="kpiWarehouseBar"></div></div>
+          </article>
+
+          <article class="kpi-card kpi-card--packed">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--packed"></span>PACKED</span>
+              <span class="kpi-card__code">STG-03</span>
+            </div>
+            <div class="kpi-card__value" id="kpiPacked">0</div>
+            <div class="kpi-card__sub" id="kpiPackedSub">STAGED FOR DISPATCH</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--packed" id="kpiPackedBar"></div></div>
+          </article>
+
+          <article class="kpi-card kpi-card--sent">
+            <div class="kpi-card__top">
+              <span class="kpi-card__label"><span class="dot dot--sent"></span>SENT</span>
+              <span class="kpi-card__code">STG-04</span>
+            </div>
+            <div class="kpi-card__value" id="kpiSent">0</div>
+            <div class="kpi-card__sub" id="kpiSentSub">DELIVERED / IN TRANSIT</div>
+            <div class="kpi-bar"><div class="kpi-bar__fill kpi-bar__fill--sent" id="kpiSentBar"></div></div>
+          </article>
+        </div>
+
+        <!-- OVERALL PIPELINE DISTRIBUTION BAR -->
+        <div class="pipeline-strip" aria-label="Pipeline distribution across stages">
+          <div class="pipeline-strip__head">
+            <span class="pipeline-strip__title">PIPELINE DISTRIBUTION — ALL TRACKED UNITS</span>
+            <span class="pipeline-strip__total" id="pipelineTotal">0 TOTAL UNITS</span>
+          </div>
+          <div class="pipeline-bar">
+            <div class="pipeline-bar__seg pipeline-bar__seg--production" id="segProduction" title="In Production"></div>
+            <div class="pipeline-bar__seg pipeline-bar__seg--warehouse" id="segWarehouse" title="In Warehouse"></div>
+            <div class="pipeline-bar__seg pipeline-bar__seg--packed" id="segPacked" title="Packed"></div>
+            <div class="pipeline-bar__seg pipeline-bar__seg--sent" id="segSent" title="Sent"></div>
+          </div>
+          <div class="pipeline-legend" id="pipelineLegend"></div>
+        </div>
+      </section>
+
+      <!-- FILTER & SEARCH TOOLBAR -->
+      <section class="projects-toolbar tracker-toolbar" aria-label="Filter tracked products">
+        <div class="filter-tabs" role="group" aria-label="Status filters">
+          <button class="filter-btn hover-sound is-active" type="button" data-status-filter="all" aria-pressed="true">
+            ALL <span class="filter-btn__count" data-status-count="all">00</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-status-filter="needs-work" aria-pressed="false">
+            NEEDS PRODUCTION <span class="filter-btn__count" data-status-count="needs-work">00</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-status-filter="production" aria-pressed="false">
+            IN PRODUCTION <span class="filter-btn__count" data-status-count="production">00</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-status-filter="warehouse" aria-pressed="false">
+            IN WAREHOUSE <span class="filter-btn__count" data-status-count="warehouse">00</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-status-filter="packed" aria-pressed="false">
+            PACKED <span class="filter-btn__count" data-status-count="packed">00</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-status-filter="sent" aria-pressed="false">
+            SENT <span class="filter-btn__count" data-status-count="sent">00</span>
+          </button>
+        </div>
+
+        <div class="tracker-tools">
+          <input
+            class="search-input"
+            id="searchInput"
+            type="search"
+            placeholder="SEARCH SKU, PRODUCT OR CLIENT..."
+            aria-label="Search SKU, product or client"
+          />
+          <button class="filter-btn hover-sound" id="resetDemoBtn" type="button">
+            ↺ RESET DEMO
+          </button>
+        </div>
+      </section>
+
+      <div class="tracker-meta-row">
+        <span class="projects-status" id="gridStatus">SHOWING 00 PRODUCTS</span>
+        <span class="tracker-hint">TIP: USE CARD ACTIONS TO SIMULATE LIVE PRODUCTION &amp; DISPATCH UPDATES</span>
+      </div>
+
+      <!-- PRODUCT STATUS GRID -->
+      <section class="status-grid" id="statusGrid" aria-live="polite"></section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="projects-footer">
+      <div class="fineprint">© 2026 ::BEFORE SOLUTIONS — Tracking System (Frontend Sample).</div>
+
+      <nav class="projects-footer__links" aria-label="Navigation links">
+        <a class="projects-footer__link hover-sound" href="../../index.html">Main Website ↗</a>
+        <a class="projects-footer__link hover-sound" href="../../projects.html">Selected Projects ↗</a>
+      </nav>
+    </footer>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>::BEFORE SOLUTIONS — Creative Tool Studio</title>
+
+  <!-- Google Fonts: main site fonts (DM Sans, Roboto) + studio specimen fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="studio-shell" id="studioShell">
+
+    <!-- =========================================================
+         TOP STUDIO UTILITY BAR
+    ========================================================== -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand-group">
+          <a class="brand" href="../../index.html" aria-label="::BEFORE SOLUTIONS Home">
+            <span class="brand__mark">::BEFORE</span>
+            <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+          </a>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-product">CREATIVE STUDIO</span>
+        </div>
+
+        <div class="meta" aria-label="Studio metadata">
+          <span class="meta__item">Zrenjanin, RS</span>
+          <span class="meta__item" id="clock">--:--</span>
+          <span class="meta__item" id="day">---</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline">
+          <span class="accent-dot" aria-hidden="true"></span>
+          <strong id="activeToolBanner">01 / COLOR PALETTE GENERATOR</strong>
+        </span>
+      </div>
+
+      <div class="topbar__right topbar__actions">
+        <button class="tool-pill is-hidden hover-sound" id="resetThemeBtn" type="button" title="Restore default ::BEFORE theme">
+          ↺ DEFAULT THEME
+        </button>
+        <button class="tool-pill hover-sound" id="randomizeAllBtn" type="button" title="Randomize all four tools coherently">
+          ✦ RANDOMIZE ALL
+        </button>
+        <button class="tool-pill hover-sound" id="saveStateBtn" type="button" title="Save studio state to browser storage">
+          ↓ SAVE
+        </button>
+        <button class="tool-pill hover-sound" id="soundToggleBtn" type="button" aria-pressed="true" title="Toggle interaction audio">
+          SFX: ON
+        </button>
+        <a class="cta hover-sound" href="../../projects.html">← PROJECTS</a>
+      </div>
+    </header>
+
+    <!-- =========================================================
+         MAIN FULL-SCREEN WORKSPACE (RAIL + CONTROLS + LIVE PREVIEW)
+    ========================================================== -->
+    <div class="studio-body">
+
+      <!-- LEFT TOOL NAVIGATION RAIL -->
+      <nav class="studio-rail" aria-label="Creative studio tools">
+        <div class="studio-rail__group">
+          <span class="studio-rail__label">MODULES</span>
+
+          <button class="rail-btn hover-sound is-active" type="button" data-tool="palette" aria-pressed="true">
+            <span class="rail-btn__num">01</span>
+            <span class="rail-btn__text">
+              <span class="rail-btn__name">PALETTE</span>
+              <span class="rail-btn__sub">Harmonies &amp; UI Theme</span>
+            </span>
+          </button>
+
+          <button class="rail-btn hover-sound" type="button" data-tool="glass" aria-pressed="false">
+            <span class="rail-btn__num">02</span>
+            <span class="rail-btn__text">
+              <span class="rail-btn__name">GLASS &amp; FX</span>
+              <span class="rail-btn__sub">Gradient, Noise, Blur</span>
+            </span>
+          </button>
+
+          <button class="rail-btn hover-sound" type="button" data-tool="layout" aria-pressed="false">
+            <span class="rail-btn__num">03</span>
+            <span class="rail-btn__text">
+              <span class="rail-btn__name">LAYOUT</span>
+              <span class="rail-btn__sub">Flexbox &amp; Grid Editor</span>
+            </span>
+          </button>
+
+          <button class="rail-btn hover-sound" type="button" data-tool="type" aria-pressed="false">
+            <span class="rail-btn__num">04</span>
+            <span class="rail-btn__text">
+              <span class="rail-btn__name">TYPE SCALE</span>
+              <span class="rail-btn__sub">Modular Hierarchy</span>
+            </span>
+          </button>
+
+          <button class="rail-btn hover-sound" type="button" data-tool="buttons" aria-pressed="false">
+            <span class="rail-btn__num">05</span>
+            <span class="rail-btn__text">
+              <span class="rail-btn__name">BUTTONS</span>
+              <span class="rail-btn__sub">Figma Glass &amp; States</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="studio-rail__foot">
+          <div class="shortcut-box">
+            <span class="shortcut-box__title">SHORTCUTS</span>
+            <div class="shortcut-row"><kbd>1–5</kbd><span>Switch Tool</span></div>
+            <div class="shortcut-row"><kbd>R</kbd><span>Randomize Tool</span></div>
+            <div class="shortcut-row"><kbd>S</kbd><span>Save Studio</span></div>
+          </div>
+          <button class="rail-reset hover-sound" id="resetStudioBtn" type="button">↺ RESET ALL DEFAULTS</button>
+        </div>
+      </nav>
+
+      <!-- =======================================================
+           CONTROL INSPECTOR PANEL (CHANGES PER ACTIVE TOOL)
+      ======================================================== -->
+      <aside class="inspector" aria-label="Tool controls">
+
+        <!-- TOOL 01 CONTROLS: COLOR PALETTE -->
+        <section class="inspector-pane is-active" data-pane="palette">
+          <div class="inspector__head">
+            <span class="inspector__kicker">(→) MODULE 01</span>
+            <h1 class="inspector__title">COLOR PALETTE</h1>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">HARMONY RULE</label>
+            <div class="seg-grid seg-grid--2" id="harmonyBtns">
+              <button class="seg-btn hover-sound is-active" type="button" data-harmony="analogous">ANALOGOUS</button>
+              <button class="seg-btn hover-sound" type="button" data-harmony="complementary">COMPLEMENTARY</button>
+              <button class="seg-btn hover-sound" type="button" data-harmony="triadic">TRIADIC</button>
+              <button class="seg-btn hover-sound" type="button" data-harmony="monochromatic">MONOCHROME</button>
+              <button class="seg-btn hover-sound seg-btn--span2" type="button" data-harmony="custom">CUSTOM MANUAL</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="paletteSeed">BASE SEED COLOR</label>
+              <span class="ctrl-val" id="paletteSeedVal">#6D4AFF</span>
+            </div>
+            <div class="color-input-row">
+              <input class="color-swatch-input" id="paletteSeed" type="color" value="#6d4aff" />
+              <input class="text-input" id="paletteSeedHex" type="text" value="#6D4AFF" maxlength="7" aria-label="Base seed hex color" />
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="paletteCount">SWATCH COUNT</label>
+              <span class="ctrl-val" id="paletteCountVal">5 COLORS</span>
+            </div>
+            <input class="range-input" id="paletteCount" type="range" min="4" max="8" step="1" value="5" />
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">PREVIEW SURFACE</label>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound is-active" type="button" data-ui-surface="dark">DARK UI</button>
+              <button class="seg-btn hover-sound" type="button" data-ui-surface="light">LIGHT UI</button>
+            </div>
+          </div>
+
+          <div class="ctrl-actions">
+            <button class="btn-solid hover-sound" id="regenPaletteBtn" type="button">
+              <span>↻ GENERATE PALETTE</span>
+              <span>R</span>
+            </button>
+            <button class="btn-outline hover-sound" id="applyStudioThemeBtn" type="button">
+              <span>✦ APPLY TO STUDIO THEME</span>
+              <span>→</span>
+            </button>
+            <button class="btn-outline hover-sound" id="copyPaletteCssBtn" type="button">
+              <span>COPY CSS VARIABLES</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOOL 02 CONTROLS: GRADIENT / NOISE / GLASSMORPHISM -->
+        <section class="inspector-pane" data-pane="glass">
+          <div class="inspector__head">
+            <span class="inspector__kicker">(→) MODULE 02</span>
+            <h1 class="inspector__title">GLASS &amp; FX</h1>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">PRESETS</label>
+              <button class="mini-action hover-sound" id="syncPaletteToGlassBtn" type="button">SYNC PALETTE</button>
+            </div>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound" type="button" data-glass-preset="before">::BEFORE VIOLET</button>
+              <button class="seg-btn hover-sound" type="button" data-glass-preset="cyber">OBSIDIAN CYAN</button>
+              <button class="seg-btn hover-sound" type="button" data-glass-preset="ember">SOLAR EMBER</button>
+              <button class="seg-btn hover-sound" type="button" data-glass-preset="aurora">AURORA MESH</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">GRADIENT TYPE</label>
+            <div class="seg-grid seg-grid--3">
+              <button class="seg-btn hover-sound is-active" type="button" data-grad-type="linear">LINEAR</button>
+              <button class="seg-btn hover-sound" type="button" data-grad-type="radial">RADIAL</button>
+              <button class="seg-btn hover-sound" type="button" data-grad-type="conic">CONIC</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group" id="gradAngleGroup">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="gradAngle">ANGLE</label>
+              <span class="ctrl-val" id="gradAngleVal">135°</span>
+            </div>
+            <input class="range-input" id="gradAngle" type="range" min="0" max="360" step="1" value="135" />
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">COLOR STOPS</label>
+              <button class="mini-action hover-sound" id="addStopBtn" type="button">+ ADD STOP</button>
+            </div>
+            <div class="stops-list" id="stopsList"></div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">NOISE TEXTURE</label>
+              <label class="switch">
+                <input type="checkbox" id="noiseEnabled" checked />
+                <span class="switch__track"></span>
+              </label>
+            </div>
+
+            <div class="seg-grid seg-grid--3" style="margin-bottom:10px;">
+              <button class="seg-btn hover-sound is-active" type="button" data-noise-type="fractalNoise">FRACTAL</button>
+              <button class="seg-btn hover-sound" type="button" data-noise-type="turbulence">TURBULENT</button>
+              <button class="seg-btn hover-sound" type="button" data-noise-type="grain">FILM GRAIN</button>
+            </div>
+
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="noiseIntensity">INTENSITY</label>
+              <span class="ctrl-val" id="noiseIntensityVal">22%</span>
+            </div>
+            <input class="range-input" id="noiseIntensity" type="range" min="0" max="80" step="1" value="22" />
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label" for="noiseScale">SCALE / FREQUENCY</label>
+              <span class="ctrl-val" id="noiseScaleVal">0.75</span>
+            </div>
+            <input class="range-input" id="noiseScale" type="range" min="0.15" max="2.5" step="0.05" value="0.75" />
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">GLASSMORPHISM CARD</label>
+              <label class="switch">
+                <input type="checkbox" id="glassEnabled" checked />
+                <span class="switch__track"></span>
+              </label>
+            </div>
+
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="glassBlur">BACKDROP BLUR</label>
+              <span class="ctrl-val" id="glassBlurVal">18px</span>
+            </div>
+            <input class="range-input" id="glassBlur" type="range" min="0" max="40" step="1" value="18" />
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label" for="glassOpacity">SURFACE OPACITY</label>
+              <span class="ctrl-val" id="glassOpacityVal">14%</span>
+            </div>
+            <input class="range-input" id="glassOpacity" type="range" min="0" max="60" step="1" value="14" />
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label" for="glassBorder">BORDER OPACITY</label>
+              <span class="ctrl-val" id="glassBorderVal">26%</span>
+            </div>
+            <input class="range-input" id="glassBorder" type="range" min="0" max="65" step="1" value="26" />
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label" for="glassSaturate">SATURATION</label>
+              <span class="ctrl-val" id="glassSaturateVal">150%</span>
+            </div>
+            <input class="range-input" id="glassSaturate" type="range" min="50" max="240" step="5" value="150" />
+          </div>
+
+          <div class="ctrl-actions">
+            <button class="btn-solid hover-sound" id="copyGlassCssBtn" type="button">
+              <span>COPY GLASS + GRADIENT CSS</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOOL 03 CONTROLS: LAYOUT GENERATOR (FLEX & GRID) -->
+        <section class="inspector-pane" data-pane="layout">
+          <div class="inspector__head">
+            <span class="inspector__kicker">(→) MODULE 03</span>
+            <h1 class="inspector__title">LAYOUT ENGINE</h1>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">DISPLAY MODE</label>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound is-active" type="button" data-layout-mode="flex">FLEXBOX</button>
+              <button class="seg-btn hover-sound" type="button" data-layout-mode="grid">CSS GRID</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">CANVAS ITEMS (<span id="layoutItemCount">6</span>)</label>
+              <div class="inline-btns">
+                <button class="mini-action hover-sound" id="addLayoutItemBtn" type="button">+ ADD</button>
+                <button class="mini-action hover-sound" id="removeLayoutItemBtn" type="button">− REMOVE</button>
+              </div>
+            </div>
+            <p class="ctrl-hint">Click an item in the stage to inspect spans, or drag items to reorder.</p>
+          </div>
+
+          <!-- FLEX CONTROLS -->
+          <div id="flexControls">
+            <div class="ctrl-group">
+              <label class="ctrl-label">DIRECTION</label>
+              <div class="seg-grid seg-grid--2">
+                <button class="seg-btn hover-sound is-active" type="button" data-flex-prop="direction" data-val="row">ROW</button>
+                <button class="seg-btn hover-sound" type="button" data-flex-prop="direction" data-val="row-reverse">ROW-REV</button>
+                <button class="seg-btn hover-sound" type="button" data-flex-prop="direction" data-val="column">COLUMN</button>
+                <button class="seg-btn hover-sound" type="button" data-flex-prop="direction" data-val="column-reverse">COL-REV</button>
+              </div>
+            </div>
+
+            <div class="ctrl-group">
+              <label class="ctrl-label">WRAP</label>
+              <div class="seg-grid seg-grid--3">
+                <button class="seg-btn hover-sound" type="button" data-flex-prop="wrap" data-val="nowrap">NOWRAP</button>
+                <button class="seg-btn hover-sound is-active" type="button" data-flex-prop="wrap" data-val="wrap">WRAP</button>
+                <button class="seg-btn hover-sound" type="button" data-flex-prop="wrap" data-val="wrap-reverse">REVERSE</button>
+              </div>
+            </div>
+
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="flexJustify">JUSTIFY CONTENT</label>
+              <select class="select-input" id="flexJustify">
+                <option value="flex-start">flex-start</option>
+                <option value="center">center</option>
+                <option value="flex-end">flex-end</option>
+                <option value="space-between" selected>space-between</option>
+                <option value="space-around">space-around</option>
+                <option value="space-evenly">space-evenly</option>
+              </select>
+            </div>
+
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="flexAlign">ALIGN ITEMS</label>
+              <select class="select-input" id="flexAlign">
+                <option value="stretch">stretch</option>
+                <option value="flex-start">flex-start</option>
+                <option value="center" selected>center</option>
+                <option value="flex-end">flex-end</option>
+                <option value="baseline">baseline</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- GRID CONTROLS -->
+          <div id="gridControls" class="is-hidden">
+            <div class="ctrl-group">
+              <div class="ctrl-row">
+                <label class="ctrl-label" for="gridCols">COLUMNS</label>
+                <span class="ctrl-val" id="gridColsVal">3 COLS</span>
+              </div>
+              <input class="range-input" id="gridCols" type="range" min="1" max="6" step="1" value="3" />
+
+              <div class="ctrl-row" style="margin-top:10px;">
+                <label class="ctrl-label" for="gridRows">ROWS</label>
+                <span class="ctrl-val" id="gridRowsVal">2 ROWS</span>
+              </div>
+              <input class="range-input" id="gridRows" type="range" min="1" max="4" step="1" value="2" />
+            </div>
+
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="gridJustify">JUSTIFY ITEMS</label>
+              <select class="select-input" id="gridJustify">
+                <option value="stretch" selected>stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+              </select>
+            </div>
+
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="gridAlign">ALIGN ITEMS</label>
+              <select class="select-input" id="gridAlign">
+                <option value="stretch" selected>stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+              </select>
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-row">
+                <label class="ctrl-label">TEMPLATE AREAS</label>
+                <label class="switch">
+                  <input type="checkbox" id="useAreasToggle" />
+                  <span class="switch__track"></span>
+                </label>
+              </div>
+              <div id="areasConfig" class="is-hidden">
+                <div class="seg-grid seg-grid--2" style="margin:8px 0;">
+                  <button class="seg-btn hover-sound is-active" type="button" data-area-preset="dashboard">DASHBOARD</button>
+                  <button class="seg-btn hover-sound" type="button" data-area-preset="bento">BENTO 3×2</button>
+                  <button class="seg-btn hover-sound" type="button" data-area-preset="editorial">EDITORIAL</button>
+                  <button class="seg-btn hover-sound" type="button" data-area-preset="holygrail">HOLY GRAIL</button>
+                </div>
+                <textarea class="area-input" id="templateAreasInput" rows="3" spellcheck="false" aria-label="CSS grid-template-areas"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SHARED GAP CONTROL -->
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="layoutGap">GAP</label>
+              <span class="ctrl-val" id="layoutGapVal">14px</span>
+            </div>
+            <input class="range-input" id="layoutGap" type="range" min="0" max="48" step="2" value="14" />
+          </div>
+
+          <!-- SELECTED ITEM INSPECTOR -->
+          <div class="ctrl-group" id="selectedItemBox">
+            <div class="ctrl-row">
+              <label class="ctrl-label" id="selectedItemTitle">ITEM 01 PROPERTIES</label>
+              <button class="mini-action hover-sound" id="resetSpansBtn" type="button">RESET</button>
+            </div>
+            <div id="selectedFlexProps">
+              <div class="ctrl-row">
+                <label class="ctrl-label" for="itemFlexGrow">FLEX GROW</label>
+                <span class="ctrl-val" id="itemFlexGrowVal">0</span>
+              </div>
+              <input class="range-input" id="itemFlexGrow" type="range" min="0" max="4" step="1" value="0" />
+            </div>
+            <div id="selectedGridProps" class="is-hidden">
+              <div class="ctrl-row">
+                <label class="ctrl-label" for="itemColSpan">COL SPAN</label>
+                <span class="ctrl-val" id="itemColSpanVal">1</span>
+              </div>
+              <input class="range-input" id="itemColSpan" type="range" min="1" max="4" step="1" value="1" />
+
+              <div class="ctrl-row" style="margin-top:8px;">
+                <label class="ctrl-label" for="itemRowSpan">ROW SPAN</label>
+                <span class="ctrl-val" id="itemRowSpanVal">1</span>
+              </div>
+              <input class="range-input" id="itemRowSpan" type="range" min="1" max="3" step="1" value="1" />
+            </div>
+          </div>
+
+          <div class="ctrl-actions">
+            <button class="btn-solid hover-sound" id="copyLayoutCssBtn" type="button">
+              <span>COPY LAYOUT CSS</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOOL 04 CONTROLS: TYPOGRAPHY SCALE -->
+        <section class="inspector-pane" data-pane="type">
+          <div class="inspector__head">
+            <span class="inspector__kicker">(→) MODULE 04</span>
+            <h1 class="inspector__title">TYPE SCALE</h1>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">VIEW MODE</label>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound is-active" type="button" data-type-view="single">SINGLE SCALE</button>
+              <button class="seg-btn hover-sound" type="button" data-type-view="compare">SIDE-BY-SIDE</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="typeBase">BASE SIZE</label>
+              <span class="ctrl-val" id="typeBaseVal">16px</span>
+            </div>
+            <input class="range-input" id="typeBase" type="range" min="12" max="24" step="1" value="16" />
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="typeRatio">PRIMARY SCALE RATIO</label>
+            <select class="select-input" id="typeRatio">
+              <option value="1.067">1.067 — Minor Second</option>
+              <option value="1.125">1.125 — Major Second</option>
+              <option value="1.200">1.200 — Minor Third</option>
+              <option value="1.250" selected>1.250 — Major Third</option>
+              <option value="1.333">1.333 — Perfect Fourth</option>
+              <option value="1.414">1.414 — Augmented Fourth</option>
+              <option value="1.500">1.500 — Perfect Fifth</option>
+              <option value="1.618">1.618 — Golden Ratio</option>
+            </select>
+          </div>
+
+          <div class="ctrl-group is-hidden" id="compareRatioGroup">
+            <label class="ctrl-label" for="typeCompareRatio">COMPARE AGAINST RATIO</label>
+            <select class="select-input" id="typeCompareRatio">
+              <option value="1.067">1.067 — Minor Second</option>
+              <option value="1.125">1.125 — Major Second</option>
+              <option value="1.200">1.200 — Minor Third</option>
+              <option value="1.250">1.250 — Major Third</option>
+              <option value="1.333" selected>1.333 — Perfect Fourth</option>
+              <option value="1.414">1.414 — Augmented Fourth</option>
+              <option value="1.500">1.500 — Perfect Fifth</option>
+              <option value="1.618">1.618 — Golden Ratio</option>
+            </select>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="typeFont">FONT FAMILY</label>
+            <select class="select-input" id="typeFont">
+              <option value="'DM Sans', sans-serif" selected>DM Sans (Studio Primary)</option>
+              <option value="'Inter', sans-serif">Inter (UI Precision)</option>
+              <option value="'Space Grotesk', sans-serif">Space Grotesk (Editorial)</option>
+              <option value="'Roboto', sans-serif">Roboto (System Clean)</option>
+              <option value="'Playfair Display', serif">Playfair Display (Serif)</option>
+              <option value="'JetBrains Mono', monospace">JetBrains Mono (Technical)</option>
+            </select>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">HEADING WEIGHT</label>
+            <div class="seg-grid seg-grid--5">
+              <button class="seg-btn hover-sound" type="button" data-type-weight="300">300</button>
+              <button class="seg-btn hover-sound" type="button" data-type-weight="400">400</button>
+              <button class="seg-btn hover-sound" type="button" data-type-weight="500">500</button>
+              <button class="seg-btn hover-sound" type="button" data-type-weight="600">600</button>
+              <button class="seg-btn hover-sound is-active" type="button" data-type-weight="700">700</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="typeLineHeight">LINE HEIGHT</label>
+              <span class="ctrl-val" id="typeLineHeightVal">1.18</span>
+            </div>
+            <input class="range-input" id="typeLineHeight" type="range" min="0.95" max="1.9" step="0.02" value="1.18" />
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label" for="typeTracking">LETTER SPACING</label>
+              <span class="ctrl-val" id="typeTrackingVal">-0.02em</span>
+            </div>
+            <input class="range-input" id="typeTracking" type="range" min="-0.06" max="0.14" step="0.005" value="-0.02" />
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="typeSampleInput">CUSTOM SPECIMEN TEXT</label>
+            <input class="text-input" id="typeSampleInput" type="text" value="Design systems built with precision." />
+          </div>
+
+          <div class="ctrl-actions">
+            <button class="btn-solid hover-sound" id="copyTypeCssBtn" type="button">
+              <span>COPY TYPE SCALE CSS VARS</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOOL 05 CONTROLS: BUTTON LAB -->
+        <section class="inspector-pane" data-pane="buttons">
+          <div class="inspector__head">
+            <span class="inspector__kicker">(→) MODULE 05</span>
+            <h1 class="inspector__title">BUTTON LAB</h1>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">PRESETS</label>
+              <button class="mini-action hover-sound" id="syncPaletteToBtn" type="button">SYNC PALETTE</button>
+            </div>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound is-active" type="button" data-btn-preset="figmaGlass">FIGMA GLASS</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-preset="beforeSolid">::BEFORE SOLID</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-preset="neonGradient">NEON GRADIENT</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-preset="ghostOutline">GHOST OUTLINE</button>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="btnTextInput">BUTTON TEXT</label>
+            <input class="text-input" id="btnTextInput" type="text" value="Explore Studio" maxlength="48" placeholder="Enter button label..." />
+
+            <div class="ctrl-row" style="margin-top:8px;">
+              <label class="ctrl-label" for="btnIconSelect">ICON / SYMBOL</label>
+              <span class="ctrl-val">OPTIONAL</span>
+            </div>
+            <div class="seg-grid seg-grid--2">
+              <select class="select-input" id="btnIconSelect" aria-label="Button icon">
+                <option value="">None</option>
+                <option value="→" selected>Arrow (→)</option>
+                <option value="↗">External (↗)</option>
+                <option value="✦">Spark (✦)</option>
+                <option value="↳">Return (↳)</option>
+                <option value="+">Plus (+)</option>
+                <option value="★">Star (★)</option>
+                <option value="⚡">Bolt (⚡)</option>
+              </select>
+              <select class="select-input" id="btnIconPos" aria-label="Icon position">
+                <option value="right" selected>Icon Right</option>
+                <option value="left">Icon Left</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">SURFACE STYLE</label>
+            <div class="seg-grid seg-grid--2">
+              <button class="seg-btn hover-sound is-active" type="button" data-btn-fill="glass">FIGMA GLASS</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-fill="solid">SOLID</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-fill="gradient">GRADIENT</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-fill="outline">OUTLINE</button>
+            </div>
+          </div>
+
+          <!-- FILL COLORS -->
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label" id="btnColor1Label" for="btnColor1">GLASS TINT</label>
+              <span class="ctrl-val" id="btnColor1Val">#FFFFFF</span>
+            </div>
+            <div class="color-input-row">
+              <input class="color-swatch-input" id="btnColor1" type="color" value="#ffffff" />
+              <div class="color-input-row" style="grid-template-columns:1fr;">
+                <input class="text-input" id="btnColor1Hex" type="text" value="#FFFFFF" maxlength="7" aria-label="Primary color hex" />
+              </div>
+            </div>
+
+            <div id="btnGradientExtras" class="is-hidden" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+              <div class="ctrl-row">
+                <label class="ctrl-label" for="btnColor2">GRADIENT END</label>
+                <span class="ctrl-val" id="btnColor2Val">#38BDF8</span>
+              </div>
+              <div class="color-input-row">
+                <input class="color-swatch-input" id="btnColor2" type="color" value="#38bdf8" />
+                <input class="text-input" id="btnColor2Hex" type="text" value="#38BDF8" maxlength="7" aria-label="Gradient end hex" />
+              </div>
+
+              <div class="ctrl-row" style="margin-top:4px;">
+                <label class="ctrl-label" for="btnGradAngle">GRADIENT ANGLE</label>
+                <span class="ctrl-val" id="btnGradAngleVal">135°</span>
+              </div>
+              <input class="range-input" id="btnGradAngle" type="range" min="0" max="360" step="5" value="135" />
+            </div>
+
+            <div class="ctrl-row" style="margin-top:8px;">
+              <label class="ctrl-label" for="btnTextColor">TEXT COLOR</label>
+              <span class="ctrl-val" id="btnTextColorVal">#FFFFFF</span>
+            </div>
+            <div class="color-input-row">
+              <input class="color-swatch-input" id="btnTextColor" type="color" value="#ffffff" />
+              <input class="text-input" id="btnTextColorHex" type="text" value="#FFFFFF" maxlength="7" aria-label="Button text hex" />
+            </div>
+          </div>
+
+          <!-- FIGMA GLASS SPECIFIC CONTROLS -->
+          <div class="ctrl-group" id="btnGlassControls">
+            <label class="ctrl-label">FIGMA GLASS PROPERTIES</label>
+
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="btnGlassBlur">BACKDROP BLUR</label>
+              <span class="ctrl-val" id="btnGlassBlurVal">16px</span>
+            </div>
+            <input class="range-input" id="btnGlassBlur" type="range" min="0" max="36" step="1" value="16" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnGlassOpacity">FILL TRANSPARENCY</label>
+              <span class="ctrl-val" id="btnGlassOpacityVal">14%</span>
+            </div>
+            <input class="range-input" id="btnGlassOpacity" type="range" min="0" max="55" step="1" value="14" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnGlassSpecular">SPECULAR RIM LIGHT</label>
+              <span class="ctrl-val" id="btnGlassSpecularVal">52%</span>
+            </div>
+            <input class="range-input" id="btnGlassSpecular" type="range" min="0" max="90" step="2" value="52" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnGlassSaturate">REFRACTION SATURATE</label>
+              <span class="ctrl-val" id="btnGlassSaturateVal">170%</span>
+            </div>
+            <input class="range-input" id="btnGlassSaturate" type="range" min="100" max="240" step="5" value="170" />
+          </div>
+
+          <!-- TYPOGRAPHY & SHAPE -->
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="btnFont">TYPOGRAPHY &amp; SHAPE</label>
+            <select class="select-input" id="btnFont">
+              <option value="'DM Sans', sans-serif" selected>DM Sans</option>
+              <option value="'Inter', sans-serif">Inter</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+              <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+            </select>
+
+            <div class="seg-grid seg-grid--3" style="margin-top:4px;">
+              <button class="seg-btn hover-sound is-active" type="button" data-btn-transform="none">NORMAL</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-transform="uppercase">UPPER</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-transform="capitalize">TITLE</button>
+            </div>
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnFontSize">FONT SIZE</label>
+              <span class="ctrl-val" id="btnFontSizeVal">14px</span>
+            </div>
+            <input class="range-input" id="btnFontSize" type="range" min="11" max="24" step="1" value="14" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnFontWeight">FONT WEIGHT</label>
+              <span class="ctrl-val" id="btnFontWeightVal">600</span>
+            </div>
+            <input class="range-input" id="btnFontWeight" type="range" min="400" max="700" step="100" value="600" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnLetterSpacing">LETTER SPACING</label>
+              <span class="ctrl-val" id="btnLetterSpacingVal">0.04em</span>
+            </div>
+            <input class="range-input" id="btnLetterSpacing" type="range" min="-0.02" max="0.2" step="0.01" value="0.04" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnPadX">PADDING X</label>
+              <span class="ctrl-val" id="btnPadXVal">28px</span>
+            </div>
+            <input class="range-input" id="btnPadX" type="range" min="10" max="56" step="2" value="28" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnPadY">PADDING Y</label>
+              <span class="ctrl-val" id="btnPadYVal">14px</span>
+            </div>
+            <input class="range-input" id="btnPadY" type="range" min="6" max="26" step="1" value="14" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnRadius">BORDER RADIUS</label>
+              <span class="ctrl-val" id="btnRadiusVal">14px</span>
+            </div>
+            <input class="range-input" id="btnRadius" type="range" min="0" max="48" step="1" value="14" />
+          </div>
+
+          <!-- BORDER / OUTLINE -->
+          <div class="ctrl-group">
+            <label class="ctrl-label">BORDER / OUTLINE</label>
+
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="btnBorderWidth">STROKE WIDTH</label>
+              <span class="ctrl-val" id="btnBorderWidthVal">1px</span>
+            </div>
+            <input class="range-input" id="btnBorderWidth" type="range" min="0" max="4" step="1" value="1" />
+
+            <div class="seg-grid seg-grid--3" style="margin-top:4px;">
+              <button class="seg-btn hover-sound is-active" type="button" data-btn-bstyle="solid">SOLID</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-bstyle="dashed">DASHED</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-bstyle="double">DOUBLE</button>
+            </div>
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnBorderColor">STROKE COLOR</label>
+              <span class="ctrl-val" id="btnBorderOpacityVal">32%</span>
+            </div>
+            <div class="color-input-row">
+              <input class="color-swatch-input" id="btnBorderColor" type="color" value="#ffffff" />
+              <input class="range-input" id="btnBorderOpacity" type="range" min="0" max="100" step="2" value="32" style="align-self:center;" aria-label="Border opacity" />
+            </div>
+          </div>
+
+          <!-- SHADOWS & GLOW -->
+          <div class="ctrl-group">
+            <div class="ctrl-row">
+              <label class="ctrl-label">DROP SHADOW</label>
+              <label class="switch">
+                <input type="checkbox" id="btnShadowEnabled" checked />
+                <span class="switch__track"></span>
+              </label>
+            </div>
+
+            <div class="ctrl-row">
+              <label class="ctrl-label" for="btnShadowY">OFFSET Y</label>
+              <span class="ctrl-val" id="btnShadowYVal">12px</span>
+            </div>
+            <input class="range-input" id="btnShadowY" type="range" min="-16" max="32" step="1" value="12" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnShadowBlur">BLUR RADIUS</label>
+              <span class="ctrl-val" id="btnShadowBlurVal">32px</span>
+            </div>
+            <input class="range-input" id="btnShadowBlur" type="range" min="0" max="64" step="2" value="32" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnShadowSpread">SPREAD</label>
+              <span class="ctrl-val" id="btnShadowSpreadVal">-4px</span>
+            </div>
+            <input class="range-input" id="btnShadowSpread" type="range" min="-12" max="16" step="1" value="-4" />
+
+            <div class="ctrl-row" style="margin-top:6px;">
+              <label class="ctrl-label" for="btnShadowColor">SHADOW COLOR / OPACITY</label>
+              <span class="ctrl-val" id="btnShadowOpacityVal">42%</span>
+            </div>
+            <div class="color-input-row">
+              <input class="color-swatch-input" id="btnShadowColor" type="color" value="#000000" />
+              <input class="range-input" id="btnShadowOpacity" type="range" min="0" max="90" step="2" value="42" style="align-self:center;" aria-label="Shadow opacity" />
+            </div>
+
+            <div class="ctrl-row" style="margin-top:10px;">
+              <label class="ctrl-label">AMBIENT OUTER GLOW</label>
+              <label class="switch">
+                <input type="checkbox" id="btnGlowEnabled" />
+                <span class="switch__track"></span>
+              </label>
+            </div>
+            <div class="color-input-row" id="btnGlowColorRow" style="margin-top:4px;">
+              <input class="color-swatch-input" id="btnGlowColor" type="color" value="#6d4aff" />
+              <input class="range-input" id="btnGlowSize" type="range" min="8" max="56" step="2" value="24" style="align-self:center;" aria-label="Glow spread" />
+            </div>
+          </div>
+
+          <!-- HOVER INTERACTION -->
+          <div class="ctrl-group">
+            <label class="ctrl-label">HOVER INTERACTION</label>
+            <div class="seg-grid seg-grid--3">
+              <button class="seg-btn hover-sound is-active" type="button" data-btn-hover="lift">LIFT</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-hover="glow">GLOW</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-hover="invert">INVERT</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-hover="scale">SCALE</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-hover="shine">SHINE</button>
+              <button class="seg-btn hover-sound" type="button" data-btn-hover="none">NONE</button>
+            </div>
+          </div>
+
+          <div class="ctrl-actions">
+            <button class="btn-solid hover-sound" id="copyBtnCssAction" type="button">
+              <span>COPY BUTTON CSS</span>
+              <span>↗</span>
+            </button>
+            <button class="btn-outline hover-sound" id="copyBtnHtmlAction" type="button">
+              <span>COPY BUTTON HTML</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </section>
+
+      </aside>
+
+      <!-- =======================================================
+           PERSISTENT LIVE PREVIEW STAGE
+      ======================================================== -->
+      <main class="stage" aria-label="Live preview workspace">
+
+        <!-- STAGE 01: PALETTE PREVIEW & LIVE UI COMPONENTS -->
+        <section class="stage-pane is-active" data-stage="palette">
+          <div class="stage-bar">
+            <span class="stage-bar__label">LIVE PALETTE &amp; UI COMPONENT PREVIEW</span>
+            <span class="stage-bar__meta" id="paletteMetaLabel">ANALOGOUS · 5 SWATCHES · CLICK ANY FORMAT TO COPY</span>
+          </div>
+
+          <div class="palette-swatches" id="paletteSwatches" aria-label="Generated color swatches"></div>
+
+          <div class="ui-preview-shell" id="uiPreviewShell">
+            <div class="ui-preview-nav">
+              <div class="ui-preview-brand">
+                <span class="ui-preview-dot"></span>
+                <span>STUDIO KIT</span>
+              </div>
+              <div class="ui-preview-links">
+                <span class="is-active">Overview</span>
+                <span>Components</span>
+                <span>Tokens</span>
+                <span>Analytics</span>
+              </div>
+              <button class="ui-btn ui-btn--primary" type="button">Deploy ↗</button>
+            </div>
+
+            <div class="ui-preview-grid">
+              <article class="ui-card">
+                <div class="ui-card__accent"></div>
+                <div class="ui-card__top">
+                  <span class="ui-badge ui-badge--1">SYSTEM LIVE</span>
+                  <span class="ui-badge ui-badge--2">v2.4</span>
+                </div>
+                <h3 class="ui-card__title">Adaptive Token Preview</h3>
+                <p class="ui-card__desc">
+                  Every button, badge, surface, and highlight updates instantaneously from your generated palette.
+                </p>
+                <div class="ui-btn-row">
+                  <button class="ui-btn ui-btn--primary" type="button">Primary Action</button>
+                  <button class="ui-btn ui-btn--secondary" type="button">Secondary</button>
+                  <button class="ui-btn ui-btn--ghost" type="button">Ghost</button>
+                </div>
+              </article>
+
+              <article class="ui-card">
+                <div class="ui-card__top">
+                  <span class="ui-badge ui-badge--3">CONTRAST READY</span>
+                  <span class="ui-badge ui-badge--4">INTERACTIVE</span>
+                </div>
+                <h3 class="ui-card__title">Quick Subscribe &amp; Status</h3>
+                <div class="ui-input-group">
+                  <input class="ui-input" type="text" value="studio@before-solutions.io" aria-label="Preview email input" />
+                  <button class="ui-btn ui-btn--accent" type="button">Join</button>
+                </div>
+                <div class="ui-bars">
+                  <div class="ui-bar-row"><span>Brand Reach</span><span>84%</span></div>
+                  <div class="ui-bar-track"><span class="ui-bar-fill ui-bar-fill--1" style="width:84%"></span></div>
+                  <div class="ui-bar-row"><span>Token Coverage</span><span>96%</span></div>
+                  <div class="ui-bar-track"><span class="ui-bar-fill ui-bar-fill--2" style="width:96%"></span></div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>CSS CUSTOM PROPERTIES</span>
+              <button class="mini-action hover-sound" id="copyPaletteCodeBtn" type="button">COPY CSS</button>
+            </div>
+            <pre class="code-block" id="paletteCssOutput"></pre>
+          </div>
+        </section>
+
+        <!-- STAGE 02: GRADIENT / NOISE / GLASSMORPHISM -->
+        <section class="stage-pane" data-stage="glass">
+          <div class="stage-bar">
+            <span class="stage-bar__label">REAL-TIME SURFACE &amp; GLASSMORPHISM STAGE</span>
+            <span class="stage-bar__meta" id="glassMetaLabel">LINEAR 135° · FRACTAL NOISE · BLUR 18PX</span>
+          </div>
+
+          <div class="glass-viewport" id="glassViewport">
+            <div class="glass-bg-layer" id="glassBgLayer"></div>
+            <div class="glass-noise-layer" id="glassNoiseLayer"></div>
+            <div class="glass-grid-lines" aria-hidden="true"></div>
+
+            <article class="glass-card" id="glassCard">
+              <div class="glass-card__head">
+                <span class="glass-card__brand">::BEFORE STUDIO</span>
+                <span class="glass-card__chip">GLASS / FX</span>
+              </div>
+              <div class="glass-card__body">
+                <h2 class="glass-card__title">Refractive Surface Pass</h2>
+                <p class="glass-card__desc">
+                  Combine multi-stop gradients, procedural SVG noise, and calibrated backdrop blur into production-ready CSS.
+                </p>
+              </div>
+              <div class="glass-card__foot">
+                <div>
+                  <span class="glass-card__meta-label">SHADER</span>
+                  <span class="glass-card__meta-val" id="glassCardShader">LINEAR / 135°</span>
+                </div>
+                <div>
+                  <span class="glass-card__meta-label">FILTER</span>
+                  <span class="glass-card__meta-val" id="glassCardFilter">18PX · 150%</span>
+                </div>
+                <div>
+                  <span class="glass-card__meta-label">NOISE</span>
+                  <span class="glass-card__meta-val" id="glassCardNoise">22% FRACTAL</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>GENERATED HTML SNIPPET</span>
+              <button class="mini-action hover-sound" id="copyGlassHtmlBtn" type="button">COPY HTML</button>
+            </div>
+            <pre class="code-block" id="glassHtmlOutput"></pre>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>GENERATED CSS SNIPPET</span>
+              <button class="mini-action hover-sound" id="copyGlassCodeBtn" type="button">COPY CSS</button>
+            </div>
+            <pre class="code-block" id="glassCssOutput"></pre>
+          </div>
+        </section>
+
+        <!-- STAGE 03: FLEX & GRID VISUAL EDITOR -->
+        <section class="stage-pane" data-stage="layout">
+          <div class="stage-bar">
+            <span class="stage-bar__label">VISUAL LAYOUT CANVAS — DRAG ITEMS TO REORDER</span>
+            <span class="stage-bar__meta" id="layoutMetaLabel">DISPLAY: FLEX · GAP: 14PX</span>
+          </div>
+
+          <div class="layout-viewport">
+            <div class="layout-canvas" id="layoutCanvas" aria-label="Interactive CSS layout container"></div>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>GENERATED LAYOUT CSS</span>
+              <button class="mini-action hover-sound" id="copyLayoutCodeBtn" type="button">COPY CSS</button>
+            </div>
+            <pre class="code-block" id="layoutCssOutput"></pre>
+          </div>
+        </section>
+
+        <!-- STAGE 04: TYPOGRAPHY SCALE PLAYGROUND -->
+        <section class="stage-pane" data-stage="type">
+          <div class="stage-bar">
+            <span class="stage-bar__label">MODULAR TYPOGRAPHY HIERARCHY</span>
+            <span class="stage-bar__meta" id="typeMetaLabel">BASE 16PX · 1.250 MAJOR THIRD</span>
+          </div>
+
+          <div class="type-stage" id="typeStage">
+            <div class="type-column" id="typePrimaryCol"></div>
+            <div class="type-column is-hidden" id="typeCompareCol"></div>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>TYPOGRAPHY CSS CUSTOM PROPERTIES</span>
+              <button class="mini-action hover-sound" id="copyTypeCodeBtn" type="button">COPY CSS</button>
+            </div>
+            <pre class="code-block" id="typeCssOutput"></pre>
+          </div>
+        </section>
+
+        <!-- STAGE 05: BUTTON LAB -->
+        <section class="stage-pane" data-stage="buttons">
+          <div class="stage-bar">
+            <span class="stage-bar__label">INTERACTIVE BUTTON PLAYGROUND</span>
+            <div class="btn-stage-modes" role="group" aria-label="Preview backdrop">
+              <button class="mini-action hover-sound is-active" type="button" data-btn-bg="mesh">MESH</button>
+              <button class="mini-action hover-sound" type="button" data-btn-bg="dark">DARK</button>
+              <button class="mini-action hover-sound" type="button" data-btn-bg="light">LIGHT</button>
+            </div>
+          </div>
+
+          <div class="btn-viewport btn-viewport--mesh" id="btnViewport">
+            <div class="btn-viewport__grid" aria-hidden="true"></div>
+            <div class="btn-viewport__center">
+              <button class="studio-btn-live hover-sound" id="livePreviewBtn" type="button"></button>
+              <span class="btn-viewport__hint">HOVER &amp; CLICK TO TEST LIVE INTERACTION</span>
+            </div>
+
+            <div class="btn-states-strip" aria-label="Button state comparison">
+              <div class="btn-state-cell">
+                <span class="btn-state-cell__lbl">DEFAULT</span>
+                <button class="studio-btn-live studio-btn-live--sm" id="stateDefaultBtn" type="button" tabindex="-1"></button>
+              </div>
+              <div class="btn-state-cell">
+                <span class="btn-state-cell__lbl">HOVER STATE</span>
+                <button class="studio-btn-live studio-btn-live--sm is-forced-hover" id="stateHoverBtn" type="button" tabindex="-1"></button>
+              </div>
+              <div class="btn-state-cell">
+                <span class="btn-state-cell__lbl">DISABLED</span>
+                <button class="studio-btn-live studio-btn-live--sm" id="stateDisabledBtn" type="button" disabled></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>GENERATED HTML SNIPPET</span>
+              <button class="mini-action hover-sound" id="copyBtnHtmlCode" type="button">COPY HTML</button>
+            </div>
+            <pre class="code-block" id="btnHtmlOutput"></pre>
+          </div>
+
+          <div class="code-drawer">
+            <div class="code-drawer__head">
+              <span>GENERATED CSS SNIPPET</span>
+              <button class="mini-action hover-sound" id="copyBtnCssCode" type="button">COPY CSS</button>
+            </div>
+            <pre class="code-block" id="btnCssOutput"></pre>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- TOAST FEEDBACK -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+
+</html>

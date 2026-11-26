@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>::BEFORE — Projects</title>
+
+  <!-- Fonts (source: Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=DM+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <main class="page page--projects">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <a class="brand" href="./index.html" aria-label="::BEFORE SOLUTIONS Home">
+          <span class="brand__mark">::BEFORE</span>
+          <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+        </a>
+
+        <div class="meta" aria-label="Site metadata">
+          <span class="meta__item">LOCATION</span>
+          <span class="meta__item">Zrenjanin, RS</span>
+          <span class="meta__item" id="clock">--:--</span>
+          <span class="meta__item" id="day">---</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline"><strong>BOOKING PROJECTS FOR FEB’26</strong></span>
+      </div>
+
+      <div class="topbar__right">
+        <button class="cta hover-sound" id="openForm" type="button">
+          ↳ BOOK DISCOVERY CALL W/ NEMANJA
+        </button>
+      </div>
+    </header>
+
+    <!-- PROJECTS SECTION -->
+    <section class="projects-wrap" aria-labelledby="projectsHeading">
+      <div class="projects-hero">
+        <a class="back-link hover-sound" href="./index.html">← BACK TO HOME</a>
+
+        <div class="projects-hero__row">
+          <div class="projects-hero__copy">
+            <span class="projects-hero__kicker">(→) CONTENT DEVELOPMENT — ARCHIVE</span>
+            <h1 class="projects-hero__title" id="projectsHeading">SELECTED PROJECTS</h1>
+          </div>
+
+          <p class="projects-hero__desc">
+            <strong>*</strong>A curated collection of development and design work by
+            <strong>Nemanja Milin</strong> — combining engineering, visual systems,
+            and workflow into clear, sustainable digital products and brand identities.
+          </p>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="projects-toolbar" role="region" aria-label="Filter projects by discipline">
+        <div class="filter-tabs" role="group" aria-label="Project categories">
+          <button class="filter-btn hover-sound is-active" type="button" data-filter="all" aria-pressed="true">
+            ALL <span class="filter-btn__count" data-count="all">04</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-filter="development" aria-pressed="false">
+            DEVELOPMENT <span class="filter-btn__count" data-count="development">02</span>
+          </button>
+          <button class="filter-btn hover-sound" type="button" data-filter="design" aria-pressed="false">
+            DESIGN <span class="filter-btn__count" data-count="design">03</span>
+          </button>
+        </div>
+
+        <span class="projects-status" id="projectsStatus">SHOWING 04 PROJECTS</span>
+      </div>
+
+      <!--
+        ===================================================================
+        HOW TO ADD A NEW PROJECT:
+        1. Copy one <article class="project-card">...</article> block below.
+        2. Set data-category to:
+           - "development"        (Developer projects)
+           - "design"             (Designer projects)
+           - "development design" (Both developer & designer)
+        3. To add a preview image, replace the .project-card__placeholder div
+           inside .project-card__media with:
+           <img src="./images/your-image.jpg" alt="Project preview" loading="lazy" />
+        4. Filter counts and card numbers update automatically.
+        ===================================================================
+      -->
+      <div class="projects-grid" id="projectsGrid">
+
+        <!-- PROJECT 01 (Development) -->
+        <article class="project-card" data-category="development">
+          <div class="project-card__media">
+            <img
+              src="./projects/tracking-system/assets/preview.png"
+              alt="::BEFORE SOLUTIONS — Tracking System warehouse dashboard preview"
+              loading="lazy"
+            />
+            <div class="project-card__overlay-meta">
+              <span class="project-card__index"></span>
+              <span class="project-card__year">2026</span>
+            </div>
+          </div>
+
+          <div class="project-card__body">
+            <div class="project-card__roles">
+              <span class="role-pill">DEVELOPMENT</span>
+            </div>
+            <h2 class="project-card__title">::BEFORE SOLUTIONS — Tracking System</h2>
+            <p class="project-card__desc">
+              Warehouse product and order status tracking frontend with pre-filled demo login,
+              register and OAuth sample flows, and a live status grid monitoring stock, remaining
+              client order targets, production, warehouse, packed, and sent units.
+            </p>
+            <ul class="project-card__tags" aria-label="Technologies used">
+              <li>HTML / CSS</li>
+              <li>JavaScript</li>
+              <li>Warehouse UI</li>
+            </ul>
+          </div>
+
+          <div class="project-card__foot">
+            <a class="project-link hover-sound" href="./projects/tracking-system/index.html" target="_blank" rel="noopener noreferrer">
+              <span>LIVE PROJECT</span>
+              <span class="row__icon">↗</span>
+            </a>
+            <a class="project-link hover-sound" href="https://github.com/milinnemanja" target="_blank" rel="noopener noreferrer">
+              <span>SOURCE CODE</span>
+              <span class="row__icon">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- PROJECT 02 (Development & Design) -->
+        <article class="project-card" data-category="development design">
+          <div class="project-card__media">
+            <div class="project-card__placeholder" aria-hidden="true">
+              <span class="project-card__placeholder-label">TIMELINE TRACKER / 3 SHIFTS</span>
+            </div>
+            <div class="project-card__overlay-meta">
+              <span class="project-card__index"></span>
+              <span class="project-card__year">2026</span>
+            </div>
+          </div>
+
+          <div class="project-card__body">
+            <div class="project-card__roles">
+              <span class="role-pill">DEVELOPMENT</span>
+              <span class="role-pill">DESIGN</span>
+            </div>
+            <h2 class="project-card__title">::BEFORE SOLUTIONS — Timeline Tracker</h2>
+            <p class="project-card__desc">
+              Real-time 3-shift production timeline tracker (06:00–14:00, 14:00–22:00, 22:00–06:00)
+              with an interactive full clock selector to the exact minute, purple/white/red status
+              segments for production, lunch breaks, and system errors, plus a historical shift calendar.
+            </p>
+            <ul class="project-card__tags" aria-label="Technologies used">
+              <li>HTML / CSS</li>
+              <li>JavaScript</li>
+              <li>Shift Timeline</li>
+            </ul>
+          </div>
+
+          <div class="project-card__foot">
+            <a class="project-link hover-sound" href="./projects/timeline-tracker/index.html" target="_blank" rel="noopener noreferrer">
+              <span>LIVE PROJECT</span>
+              <span class="row__icon">↗</span>
+            </a>
+            <a class="project-link hover-sound" href="https://github.com/milinnemanja" target="_blank" rel="noopener noreferrer">
+              <span>SOURCE CODE</span>
+              <span class="row__icon">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- PROJECT 03 (Development & Design) -->
+        <article class="project-card" data-category="development design">
+          <div class="project-card__media">
+            <img
+              src="./projects/creative-studio/assets/preview.png"
+              alt="::BEFORE SOLUTIONS — Creative Studio interactive design tool preview"
+              loading="lazy"
+            />
+            <div class="project-card__overlay-meta">
+              <span class="project-card__index"></span>
+              <span class="project-card__year">2026</span>
+            </div>
+          </div>
+
+          <div class="project-card__body">
+            <div class="project-card__roles">
+              <span class="role-pill">DEVELOPMENT</span>
+              <span class="role-pill">DESIGN</span>
+            </div>
+            <h2 class="project-card__title">Interactive Studio Experience</h2>
+            <p class="project-card__desc">
+              A 4-in-1 Creative Tool Studio featuring a Color Palette Generator with live UI
+              theming, Gradient / Noise / Glassmorphism playground, drag-and-drop Flexbox &amp; CSS
+              Grid layout editor, and modular Typography Scale workbench.
+            </p>
+            <ul class="project-card__tags" aria-label="Technologies and deliverables">
+              <li>HTML / CSS</li>
+              <li>JavaScript</li>
+              <li>Design Tools</li>
+            </ul>
+          </div>
+
+          <div class="project-card__foot">
+            <a class="project-link hover-sound" href="./projects/creative-studio/index.html" target="_blank" rel="noopener noreferrer">
+              <span>LIVE PROJECT</span>
+              <span class="row__icon">↗</span>
+            </a>
+            <a class="project-link hover-sound" href="https://github.com/milinnemanja" target="_blank" rel="noopener noreferrer">
+              <span>SOURCE CODE</span>
+              <span class="row__icon">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- PROJECT 04 (Design) -->
+        <article class="project-card" data-category="design">
+          <div class="project-card__media">
+            <div class="project-card__placeholder" aria-hidden="true">
+              <span class="project-card__placeholder-label">PREVIEW IMAGE / 16:10</span>
+            </div>
+            <div class="project-card__overlay-meta">
+              <span class="project-card__index"></span>
+              <span class="project-card__year">2026</span>
+            </div>
+          </div>
+
+          <div class="project-card__body">
+            <div class="project-card__roles">
+              <span class="role-pill">DESIGN</span>
+            </div>
+            <h2 class="project-card__title">Digital Product Interface</h2>
+            <p class="project-card__desc">
+              End-to-end interactive checkout flow crafted with pure HTML, CSS, and vanilla JavaScript —
+              featuring live cart management, shipping &amp; card validation, 3D card preview, state simulation,
+              loading pipelines, and full error/success recovery states.
+            </p>
+            <ul class="project-card__tags" aria-label="Deliverables">
+              <li>HTML / CSS</li>
+              <li>JavaScript</li>
+              <li>Checkout Flow</li>
+            </ul>
+          </div>
+
+          <div class="project-card__foot">
+            <a class="project-link hover-sound" href="./projects/digital-product-interface/index.html" target="_blank" rel="noopener noreferrer">
+              <span>LIVE PROJECT</span>
+              <span class="row__icon">↗</span>
+            </a>
+            <a class="project-link hover-sound" href="https://github.com/milinnemanja" target="_blank" rel="noopener noreferrer">
+              <span>SOURCE CODE</span>
+              <span class="row__icon">↗</span>
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="projects-footer">
+      <div class="fineprint">© 2026 Nemanja Milin. All rights reserved.</div>
+
+      <nav class="projects-footer__links" aria-label="Social links">
+        <a class="projects-footer__link hover-sound" href="https://github.com/milinnemanja" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a class="projects-footer__link hover-sound" href="https://www.linkedin.com/in/nemanja-milin/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a class="projects-footer__link hover-sound" href="https://www.instagram.com/milinnemanja/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+      </nav>
+    </footer>
+
+    <!-- MODAL -->
+    <div class="modal" id="contactModal" aria-hidden="true">
+      <div class="modal__overlay"></div>
+
+      <!-- Formspree -->
+      <form class="modal__content" id="contactForm" action="https://formspree.io/f/xnqyjwgo" method="POST">
+        <button type="button" class="modal__close" id="closeForm" aria-label="Close">×</button>
+
+        <div class="form-body" id="formBody">
+          <h2>Book a Discovery Call</h2>
+
+          <input type="hidden" name="_subject" value="Discovery Call Request">
+
+          <label>
+            Name
+            <input type="text" name="Name" required>
+          </label>
+
+          <label>
+            Company
+            <input type="text" name="Company">
+          </label>
+
+          <label>
+            Email
+            <input type="email" name="Email" required>
+          </label>
+
+          <label>
+            Phone number
+            <input type="tel" name="Phone">
+          </label>
+
+          <label>
+            Message
+            <textarea name="Message" rows="4"></textarea>
+          </label>
+
+          <button type="submit" class="submit">
+            Submit Request
+          </button>
+        </div>
+
+        <div class="form-success" id="formSuccess">
+          <h3>Message sent</h3>
+          <p>Thank you — I’ll get back to you shortly.</p>
+        </div>
+
+        <div class="form-error" id="formError">
+          <h3>Something went wrong</h3>
+          <p>Please try again, or email me directly at nemanjamilin.contact@gmail.com</p>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>

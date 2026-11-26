@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>::BEFORE SOLUTIONS — Checkout Interface</title>
+
+  <!-- Fonts (matching ::BEFORE SOLUTIONS website) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <div class="checkout-shell" id="checkoutShell">
+
+    <!-- =========================================================
+         TOP BAR (EXACT MATCH TO ::BEFORE SOLUTIONS)
+    ========================================================== -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand-group">
+          <a class="brand" href="../../index.html" aria-label="::BEFORE SOLUTIONS Home">
+            <span class="brand__mark">::BEFORE</span>
+            <span class="brand__sub" aria-hidden="true"><span>S</span><span>O</span><span>L</span><span>U</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span></span>
+          </a>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-product">DIGITAL PRODUCT INTERFACE</span>
+        </div>
+
+        <div class="meta" aria-label="Site metadata">
+          <span class="meta__item">Zrenjanin, RS</span>
+          <span class="meta__item" data-clock>--:--</span>
+          <span class="meta__item" data-day>---</span>
+        </div>
+      </div>
+
+      <div class="topbar__center">
+        <span class="topbar__headline">
+          <span class="live-dot" aria-hidden="true"></span>
+          <strong>CHECKOUT FLOW — PROTOTYPE v1.0</strong>
+        </span>
+      </div>
+
+      <div class="topbar__right topbar__actions">
+        <button class="tool-pill hover-sound" id="soundToggleBtn" type="button" aria-pressed="true" title="Toggle hover audio">
+          SFX: ON
+        </button>
+        <button class="tool-pill hover-sound is-active" id="qaToggleBtn" type="button" aria-pressed="true" title="Toggle State Inspector">
+          STATE LAB
+        </button>
+        <a class="cta hover-sound" href="../../projects.html">← BACK TO PROJECTS</a>
+      </div>
+    </header>
+
+    <!-- =========================================================
+         STATE LAB BAR (QUICK ACCESS TO ALL UI & ERROR STATES)
+    ========================================================== -->
+    <section class="qa-bar" id="qaBar" aria-label="Interactive State Simulator">
+      <div class="qa-bar__inner">
+        <div class="qa-bar__group">
+          <span class="qa-bar__label">GATEWAY OUTCOME:</span>
+          <div class="qa-pills" role="group" aria-label="Simulated payment gateway outcome">
+            <button class="qa-pill hover-sound is-active" type="button" data-sim-outcome="success" aria-pressed="true">SUCCESS</button>
+            <button class="qa-pill hover-sound" type="button" data-sim-outcome="declined" aria-pressed="false">PAYMENT FAILED</button>
+            <button class="qa-pill hover-sound" type="button" data-sim-outcome="network" aria-pressed="false">NETWORK ERROR</button>
+          </div>
+        </div>
+
+        <div class="qa-bar__group">
+          <span class="qa-bar__label">QUICK STATES:</span>
+          <div class="qa-pills">
+            <button class="qa-pill hover-sound" type="button" id="qaEmptyCartBtn">EMPTY BAG</button>
+            <button class="qa-pill hover-sound" type="button" id="qaFillDemoBtn">PREFILL FORM</button>
+            <button class="qa-pill hover-sound" type="button" id="qaValidationBtn">TRIGGER VALIDATION</button>
+            <button class="qa-pill hover-sound" type="button" id="qaDisabledBtn" aria-pressed="false">DISABLED PREVIEW</button>
+            <button class="qa-pill hover-sound" type="button" id="qaResetBtn">↺ RESET</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         STEP PROGRESS RAIL
+    ========================================================== -->
+    <nav class="stepper-wrap" id="stepperWrap" aria-label="Checkout progress">
+      <div class="stepper">
+        <div class="stepper__track" aria-hidden="true">
+          <div class="stepper__fill" id="stepperFill"></div>
+        </div>
+
+        <button class="step-node hover-sound is-active" type="button" data-step-target="cart" aria-current="step">
+          <span class="step-node__num">01</span>
+          <span class="step-node__label">CART OVERVIEW</span>
+        </button>
+
+        <button class="step-node hover-sound" type="button" data-step-target="shipping" disabled>
+          <span class="step-node__num">02</span>
+          <span class="step-node__label">SHIPPING</span>
+        </button>
+
+        <button class="step-node hover-sound" type="button" data-step-target="payment" disabled>
+          <span class="step-node__num">03</span>
+          <span class="step-node__label">PAYMENT</span>
+        </button>
+
+        <button class="step-node hover-sound" type="button" data-step-target="review" disabled>
+          <span class="step-node__num">04</span>
+          <span class="step-node__label">ORDER REVIEW</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- =========================================================
+         MAIN CHECKOUT STAGE
+    ========================================================== -->
+    <main class="checkout-stage">
+      <div class="checkout-grid" id="checkoutGrid">
+
+        <!-- LEFT COLUMN: ACTIVE STEP / VIEW -->
+        <div class="checkout-main" id="checkoutMain">
+
+          <!-- ===================================================
+               STEP 1: CART OVERVIEW (WITH EMPTY STATE)
+          ==================================================== -->
+          <section class="panel step-view is-active" id="step-cart" aria-labelledby="cartHeading">
+            <header class="panel__head">
+              <div>
+                <span class="panel__kicker">(→) STEP 01 / STUDIO SELECTION</span>
+                <h1 class="panel__title" id="cartHeading">YOUR ORDER BAG</h1>
+              </div>
+
+              <div class="panel__head-actions">
+                <span class="count-badge" id="cartCountBadge">03 ITEMS</span>
+                <button class="btn-ghost btn-ghost--sm hover-sound" type="button" id="clearCartBtn">CLEAR BAG</button>
+              </div>
+            </header>
+
+            <!-- Cart Items List -->
+            <div class="cart-list" id="cartItemsList" role="list"></div>
+
+            <!-- Empty Cart State -->
+            <div class="empty-state is-hidden" id="cartEmptyState" role="status" aria-live="polite">
+              <div class="empty-state__icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="52" height="52" fill="none">
+                  <rect x="12" y="18" width="40" height="36" rx="3" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+                  <path d="M22 18V14C22 9.58 26.48 6 32 6C37.52 6 42 9.58 42 14V18" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M25 35H39" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="empty-state__code">STATE / EMPTY_BAG</span>
+              <h2 class="empty-state__title">YOUR STUDIO BAG IS EMPTY</h2>
+              <p class="empty-state__desc">
+                Add items from the ::BEFORE catalog below or restore the default studio bundle to continue checkout.
+              </p>
+              <div class="empty-state__actions">
+                <button class="btn-primary hover-sound" type="button" id="restoreBagBtn">
+                  <span>RESTORE DEFAULT STUDIO BAG</span>
+                  <span>↺</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Studio Add-ons / Quick Catalog -->
+            <div class="addons-block" id="addonsBlock">
+              <div class="addons-block__head">
+                <span class="addons-block__label">RECOMMENDED STUDIO ADDITIONS—</span>
+                <span class="addons-block__hint">CLICK TO ADD INSTANTLY</span>
+              </div>
+              <div class="addons-grid" id="addonsGrid"></div>
+            </div>
+
+            <footer class="panel__foot">
+              <div class="panel__foot-note" id="cartFootNote">
+                <span class="status-dot status-dot--ok" aria-hidden="true"></span>
+                <span>READY FOR DISPATCH · FREE STANDARD SHIPPING OVER $150</span>
+              </div>
+              <button class="btn-primary hover-sound" type="button" id="toShippingBtn">
+                <span>CONTINUE TO SHIPPING</span>
+                <span>→</span>
+              </button>
+            </footer>
+          </section>
+
+          <!-- ===================================================
+               STEP 2: SHIPPING & DELIVERY FORM
+          ==================================================== -->
+          <section class="panel step-view" id="step-shipping" aria-labelledby="shippingHeading" hidden>
+            <header class="panel__head">
+              <div>
+                <span class="panel__kicker">(→) STEP 02 / DISPATCH DETAILS</span>
+                <h1 class="panel__title" id="shippingHeading">SHIPPING &amp; DELIVERY</h1>
+              </div>
+              <div class="panel__head-actions">
+                <button class="btn-ghost btn-ghost--sm hover-sound" type="button" id="fillDemoShippingBtn">
+                  FILL DEMO DETAILS
+                </button>
+              </div>
+            </header>
+
+            <!-- Form-level Validation Error Banner -->
+            <div class="inline-banner inline-banner--error is-hidden" id="shippingErrorBanner" role="alert">
+              <span class="inline-banner__code">ERR_VALIDATION</span>
+              <span class="inline-banner__msg">Please review the highlighted fields before continuing.</span>
+            </div>
+
+            <form class="checkout-form" id="shippingForm" novalidate>
+              <!-- Contact Info -->
+              <div class="form-section">
+                <h2 class="form-section__title">01. CONTACT INFORMATION</h2>
+                <div class="form-grid form-grid--2">
+                  <div class="field" data-field="fullName">
+                    <label class="field__label" for="shipFullName">FULL NAME <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipFullName" name="fullName" type="text" placeholder="Nemanja Milin" autocomplete="name" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-fullName" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="email">
+                    <label class="field__label" for="shipEmail">EMAIL ADDRESS <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipEmail" name="email" type="email" placeholder="name@studio.com" autocomplete="email" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-email" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field form-grid__span-2" data-field="phone">
+                    <label class="field__label" for="shipPhone">PHONE NUMBER <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipPhone" name="phone" type="tel" placeholder="+381 60 123 4567" autocomplete="tel" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-phone" aria-live="polite"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Delivery Method -->
+              <div class="form-section">
+                <h2 class="form-section__title">02. DELIVERY METHOD</h2>
+                <div class="delivery-options" role="radiogroup" aria-label="Delivery method">
+                  <label class="choice-card hover-sound is-selected">
+                    <input class="choice-card__radio" type="radio" name="deliveryMethod" value="standard" checked />
+                    <span class="choice-card__indicator" aria-hidden="true"></span>
+                    <span class="choice-card__body">
+                      <span class="choice-card__top">
+                        <span class="choice-card__name">STANDARD TRACKED COURIER</span>
+                        <span class="choice-card__price" id="stdShippingPriceLabel">FREE</span>
+                      </span>
+                      <span class="choice-card__meta">3–5 business days · Full tracking &amp; signature</span>
+                    </span>
+                  </label>
+
+                  <label class="choice-card hover-sound">
+                    <input class="choice-card__radio" type="radio" name="deliveryMethod" value="express" />
+                    <span class="choice-card__indicator" aria-hidden="true"></span>
+                    <span class="choice-card__body">
+                      <span class="choice-card__top">
+                        <span class="choice-card__name">EXPRESS AIR PRIORITY</span>
+                        <span class="choice-card__price">$18.00</span>
+                      </span>
+                      <span class="choice-card__meta">1–2 business days · Priority customs clearance</span>
+                    </span>
+                  </label>
+
+                  <label class="choice-card hover-sound">
+                    <input class="choice-card__radio" type="radio" name="deliveryMethod" value="pickup" />
+                    <span class="choice-card__indicator" aria-hidden="true"></span>
+                    <span class="choice-card__body">
+                      <span class="choice-card__top">
+                        <span class="choice-card__name">STUDIO PICKUP — ZRENJANIN, RS</span>
+                        <span class="choice-card__price">FREE</span>
+                      </span>
+                      <span class="choice-card__meta">Ready within 24 hours · Address fields disabled</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Delivery Address -->
+              <div class="form-section" id="addressFieldsSection">
+                <div class="form-section__head">
+                  <h2 class="form-section__title">03. SHIPPING ADDRESS</h2>
+                  <span class="state-chip is-hidden" id="addressDisabledChip">DISABLED · STUDIO PICKUP</span>
+                </div>
+
+                <div class="form-grid form-grid--2" id="addressFieldsGroup">
+                  <div class="field form-grid__span-2" data-field="street">
+                    <label class="field__label" for="shipStreet">STREET ADDRESS <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipStreet" name="street" type="text" placeholder="Kralja Aleksandra I Karadjordjevica 24" autocomplete="street-address" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-street" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="apartment">
+                    <label class="field__label" for="shipApartment">APT / SUITE (OPTIONAL)</label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipApartment" name="apartment" type="text" placeholder="Studio 4B" autocomplete="address-line2" />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-apartment" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="city">
+                    <label class="field__label" for="shipCity">CITY <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipCity" name="city" type="text" placeholder="Zrenjanin" autocomplete="address-level2" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-city" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="postalCode">
+                    <label class="field__label" for="shipPostal">POSTAL CODE <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="shipPostal" name="postalCode" type="text" placeholder="23000" autocomplete="postal-code" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-postalCode" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="country">
+                    <label class="field__label" for="shipCountry">COUNTRY / REGION <span class="req">*</span></label>
+                    <div class="field__control">
+                      <select class="field__input field__select" id="shipCountry" name="country" autocomplete="country-name" required>
+                        <option value="RS">Serbia (RS)</option>
+                        <option value="DE">Germany (DE)</option>
+                        <option value="NL">Netherlands (NL)</option>
+                        <option value="GB">United Kingdom (GB)</option>
+                        <option value="US">United States (US)</option>
+                        <option value="CH">Switzerland (CH)</option>
+                      </select>
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-country" aria-live="polite"></p>
+                  </div>
+                </div>
+              </div>
+
+              <footer class="panel__foot panel__foot--split">
+                <button class="btn-ghost hover-sound" type="button" id="backToCartBtn">← BACK TO CART</button>
+                <button class="btn-primary hover-sound" type="submit" id="toPaymentBtn">
+                  <span>CONTINUE TO PAYMENT</span>
+                  <span>→</span>
+                </button>
+              </footer>
+            </form>
+          </section>
+
+          <!-- ===================================================
+               STEP 3: PAYMENT METHOD SELECTION
+          ==================================================== -->
+          <section class="panel step-view" id="step-payment" aria-labelledby="paymentHeading" hidden>
+            <header class="panel__head">
+              <div>
+                <span class="panel__kicker">(→) STEP 03 / ENCRYPTED AUTHORIZATION</span>
+                <h1 class="panel__title" id="paymentHeading">PAYMENT METHOD</h1>
+              </div>
+              <span class="secure-pill">TLS 1.3 · DEMO SANDBOX</span>
+            </header>
+
+            <div class="inline-banner inline-banner--error is-hidden" id="paymentErrorBanner" role="alert">
+              <span class="inline-banner__code">ERR_PAYMENT_INPUT</span>
+              <span class="inline-banner__msg">Please complete valid payment details to proceed.</span>
+            </div>
+
+            <!-- Payment Method Tabs -->
+            <div class="method-tabs" role="tablist" aria-label="Payment methods">
+              <button class="method-tab hover-sound is-active" type="button" role="tab" data-pay-method="card" aria-selected="true">
+                <span class="method-tab__num">01</span>
+                <span class="method-tab__name">CREDIT / DEBIT CARD</span>
+              </button>
+              <button class="method-tab hover-sound" type="button" role="tab" data-pay-method="wallet" aria-selected="false">
+                <span class="method-tab__num">02</span>
+                <span class="method-tab__name">EXPRESS WALLET</span>
+              </button>
+              <button class="method-tab hover-sound" type="button" role="tab" data-pay-method="bank" aria-selected="false">
+                <span class="method-tab__num">03</span>
+                <span class="method-tab__name">BANK TRANSFER</span>
+              </button>
+            </div>
+
+            <form class="checkout-form" id="paymentForm" novalidate>
+              <!-- Method 1: Credit / Debit Card -->
+              <div class="pay-panel" id="payPanelCard">
+                <div class="card-showcase">
+                  <div class="virtual-card" id="virtualCard">
+                    <div class="virtual-card__face virtual-card__face--front">
+                      <div class="virtual-card__top">
+                        <span class="virtual-card__chip" aria-hidden="true"></span>
+                        <span class="virtual-card__network" id="cardNetworkBadge">CARD</span>
+                      </div>
+                      <div class="virtual-card__number" id="cardPreviewNumber">•••• •••• •••• ••••</div>
+                      <div class="virtual-card__bottom">
+                        <div>
+                          <span class="virtual-card__label">CARDHOLDER</span>
+                          <span class="virtual-card__val" id="cardPreviewHolder">NEMANJA MILIN</span>
+                        </div>
+                        <div>
+                          <span class="virtual-card__label">EXPIRES</span>
+                          <span class="virtual-card__val" id="cardPreviewExpiry">MM/YY</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="virtual-card__face virtual-card__face--back">
+                      <div class="virtual-card__stripe"></div>
+                      <div class="virtual-card__cvc-row">
+                        <span class="virtual-card__sig">AUTHORIZED SIGNATURE</span>
+                        <span class="virtual-card__cvc-box" id="cardPreviewCvc">•••</span>
+                      </div>
+                      <span class="virtual-card__back-note">::BEFORE SOLUTIONS SANDBOX CARD</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Test Card Presets -->
+                <div class="preset-bar">
+                  <span class="preset-bar__label">TEST PRESETS:</span>
+                  <button class="preset-chip hover-sound" type="button" data-card-preset="success">4242 ·· PASS</button>
+                  <button class="preset-chip hover-sound" type="button" data-card-preset="decline">4000 ·· DECLINE</button>
+                  <button class="preset-chip hover-sound" type="button" data-card-preset="network">5555 ·· TIMEOUT</button>
+                </div>
+
+                <div class="form-grid form-grid--2">
+                  <div class="field form-grid__span-2" data-field="cardNumber">
+                    <label class="field__label" for="cardNumber">CARD NUMBER <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input field__input--mono" id="cardNumber" name="cardNumber" type="text" inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242" autocomplete="cc-number" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-cardNumber" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field form-grid__span-2" data-field="cardHolder">
+                    <label class="field__label" for="cardHolder">CARDHOLDER NAME <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input" id="cardHolder" name="cardHolder" type="text" placeholder="Nemanja Milin" autocomplete="cc-name" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-cardHolder" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="cardExpiry">
+                    <label class="field__label" for="cardExpiry">EXPIRATION (MM/YY) <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input field__input--mono" id="cardExpiry" name="cardExpiry" type="text" inputmode="numeric" maxlength="5" placeholder="08/28" autocomplete="cc-exp" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-cardExpiry" aria-live="polite"></p>
+                  </div>
+
+                  <div class="field" data-field="cardCvc">
+                    <label class="field__label" for="cardCvc">SECURITY CODE (CVC) <span class="req">*</span></label>
+                    <div class="field__control">
+                      <input class="field__input field__input--mono" id="cardCvc" name="cardCvc" type="password" inputmode="numeric" maxlength="4" placeholder="842" autocomplete="cc-csc" required />
+                      <span class="field__status" aria-hidden="true"></span>
+                    </div>
+                    <p class="field__error" id="err-cardCvc" aria-live="polite"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Method 2: Express Wallet -->
+              <div class="pay-panel is-hidden" id="payPanelWallet">
+                <div class="alt-pay-box">
+                  <div class="alt-pay-box__head">
+                    <span class="alt-pay-box__badge">APPLE PAY / STUDIO WALLET</span>
+                    <span class="status-pill status-pill--ok">READY</span>
+                  </div>
+                  <p class="alt-pay-box__desc">
+                    Authorize seamlessly using your device passkey or saved studio wallet token. No manual card entry required.
+                  </p>
+                  <div class="wallet-meta">
+                    <div class="wallet-meta__row">
+                      <span>TOKEN DEVICE</span>
+                      <strong>MACBOOK PRO · TOUCH ID</strong>
+                    </div>
+                    <div class="wallet-meta__row">
+                      <span>SETTLEMENT</span>
+                      <strong>INSTANT AUTHORIZATION</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Method 3: Bank Transfer / SEPA -->
+              <div class="pay-panel is-hidden" id="payPanelBank">
+                <div class="alt-pay-box">
+                  <div class="alt-pay-box__head">
+                    <span class="alt-pay-box__badge">SEPA / WIRE INVOICE</span>
+                    <span class="status-pill">NET-0</span>
+                  </div>
+                  <p class="alt-pay-box__desc">
+                    Reserve your studio order immediately and transfer funds using the reference below.
+                  </p>
+                  <div class="bank-grid">
+                    <div class="bank-row">
+                      <div>
+                        <span class="bank-row__label">BENEFICIARY</span>
+                        <span class="bank-row__val">::BEFORE SOLUTIONS STUDIO</span>
+                      </div>
+                    </div>
+                    <div class="bank-row">
+                      <div>
+                        <span class="bank-row__label">IBAN</span>
+                        <span class="bank-row__val mono" id="ibanValue">RS35 2650 0000 0041 9284 10</span>
+                      </div>
+                      <button class="btn-ghost btn-ghost--xs hover-sound" type="button" data-copy-target="ibanValue">COPY</button>
+                    </div>
+                    <div class="bank-row">
+                      <div>
+                        <span class="bank-row__label">PAYMENT REFERENCE</span>
+                        <span class="bank-row__val mono" id="refValue">BF-INV-2026-8841</span>
+                      </div>
+                      <button class="btn-ghost btn-ghost--xs hover-sound" type="button" data-copy-target="refValue">COPY</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing Address Toggle -->
+              <div class="billing-toggle">
+                <label class="check-row hover-sound">
+                  <input class="check-row__input" type="checkbox" id="sameAsShippingCheck" checked />
+                  <span class="check-row__box" aria-hidden="true"></span>
+                  <span class="check-row__text">BILLING ADDRESS MATCHES SHIPPING ADDRESS</span>
+                </label>
+
+                <div class="billing-extra is-hidden" id="billingExtraFields">
+                  <div class="form-grid form-grid--2">
+                    <div class="field form-grid__span-2" data-field="billingStreet">
+                      <label class="field__label" for="billStreet">BILLING STREET ADDRESS <span class="req">*</span></label>
+                      <div class="field__control">
+                        <input class="field__input" id="billStreet" name="billingStreet" type="text" placeholder="Billing street & number" />
+                        <span class="field__status" aria-hidden="true"></span>
+                      </div>
+                      <p class="field__error" id="err-billingStreet" aria-live="polite"></p>
+                    </div>
+                    <div class="field" data-field="billingCity">
+                      <label class="field__label" for="billCity">BILLING CITY <span class="req">*</span></label>
+                      <div class="field__control">
+                        <input class="field__input" id="billCity" name="billingCity" type="text" placeholder="City" />
+                        <span class="field__status" aria-hidden="true"></span>
+                      </div>
+                      <p class="field__error" id="err-billingCity" aria-live="polite"></p>
+                    </div>
+                    <div class="field" data-field="billingPostal">
+                      <label class="field__label" for="billPostal">BILLING POSTAL CODE <span class="req">*</span></label>
+                      <div class="field__control">
+                        <input class="field__input" id="billPostal" name="billingPostal" type="text" placeholder="Postal code" />
+                        <span class="field__status" aria-hidden="true"></span>
+                      </div>
+                      <p class="field__error" id="err-billingPostal" aria-live="polite"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <footer class="panel__foot panel__foot--split">
+                <button class="btn-ghost hover-sound" type="button" id="backToShippingBtn">← BACK TO SHIPPING</button>
+                <button class="btn-primary hover-sound" type="submit" id="toReviewBtn">
+                  <span>REVIEW ORDER</span>
+                  <span>→</span>
+                </button>
+              </footer>
+            </form>
+          </section>
+
+          <!-- ===================================================
+               STEP 4: ORDER REVIEW
+          ==================================================== -->
+          <section class="panel step-view" id="step-review" aria-labelledby="reviewHeading" hidden>
+            <header class="panel__head">
+              <div>
+                <span class="panel__kicker">(→) STEP 04 / FINAL CONFIRMATION</span>
+                <h1 class="panel__title" id="reviewHeading">REVIEW &amp; AUTHORIZE</h1>
+              </div>
+              <span class="count-badge">FINAL CHECK</span>
+            </header>
+
+            <div class="review-grid">
+              <article class="review-card">
+                <div class="review-card__head">
+                  <span class="review-card__label">01. SHIPPING &amp; CONTACT</span>
+                  <button class="btn-link hover-sound" type="button" data-jump-step="shipping">EDIT</button>
+                </div>
+                <div class="review-card__body" id="reviewShippingBody"></div>
+              </article>
+
+              <article class="review-card">
+                <div class="review-card__head">
+                  <span class="review-card__label">02. PAYMENT METHOD</span>
+                  <button class="btn-link hover-sound" type="button" data-jump-step="payment">EDIT</button>
+                </div>
+                <div class="review-card__body" id="reviewPaymentBody"></div>
+              </article>
+            </div>
+
+            <div class="review-items">
+              <div class="review-card__head">
+                <span class="review-card__label">03. ITEMS IN ORDER</span>
+                <button class="btn-link hover-sound" type="button" data-jump-step="cart">EDIT BAG</button>
+              </div>
+              <div class="review-items__list" id="reviewItemsList"></div>
+            </div>
+
+            <div class="terms-box">
+              <label class="check-row hover-sound">
+                <input class="check-row__input" type="checkbox" id="agreeTermsCheck" />
+                <span class="check-row__box" aria-hidden="true"></span>
+                <span class="check-row__text">
+                  I CONFIRM ORDER DETAILS AND AGREE TO ::BEFORE SOLUTIONS STUDIO TERMS &amp; DIGITAL LICENSE POLICY.
+                </span>
+              </label>
+              <p class="terms-box__hint" id="termsHint">Accept the studio agreement above to enable order placement.</p>
+            </div>
+
+            <footer class="panel__foot panel__foot--split">
+              <button class="btn-ghost hover-sound" type="button" id="backToPaymentBtn">← BACK TO PAYMENT</button>
+              <button class="btn-primary hover-sound" type="button" id="placeOrderBtn" disabled>
+                <span id="placeOrderBtnLabel">PLACE ORDER · $0.00</span>
+                <span>→</span>
+              </button>
+            </footer>
+          </section>
+
+          <!-- ===================================================
+               STEP 5: LOADING / PROCESSING STATE
+          ==================================================== -->
+          <section class="panel step-view" id="view-processing" aria-labelledby="processingHeading" aria-live="polite" hidden>
+            <div class="state-screen state-screen--loading">
+              <div class="loader-ring" aria-hidden="true">
+                <span class="loader-ring__inner"></span>
+              </div>
+              <span class="state-screen__code">STATE / PROCESSING_PAYMENT</span>
+              <h1 class="state-screen__title" id="processingHeading">AUTHORIZING TRANSACTION</h1>
+              <p class="state-screen__desc">
+                Communicating with payment gateway. Controls are locked to prevent duplicate charges.
+              </p>
+
+              <div class="process-bar" aria-hidden="true">
+                <div class="process-bar__fill" id="processBarFill"></div>
+              </div>
+
+              <ul class="process-log" id="processLog">
+                <li class="process-log__item" data-phase="1">
+                  <span class="process-log__dot"></span>
+                  <span>01 / VALIDATING ORDER PAYLOAD &amp; ADDRESS</span>
+                </li>
+                <li class="process-log__item" data-phase="2">
+                  <span class="process-log__dot"></span>
+                  <span>02 / VERIFYING PAYMENT TOKEN &amp; FUNDS</span>
+                </li>
+                <li class="process-log__item" data-phase="3">
+                  <span class="process-log__dot"></span>
+                  <span>03 / RESERVING INVENTORY &amp; ISSUING RECEIPT</span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               STEP 6: SUCCESS CONFIRMATION
+          ==================================================== -->
+          <section class="panel step-view" id="view-success" aria-labelledby="successHeading" hidden>
+            <div class="state-screen state-screen--success">
+              <div class="success-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="60" height="60" fill="none">
+                  <circle class="success-mark__circle" cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" />
+                  <path class="success-mark__check" d="M20 33L28 41L45 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" />
+                </svg>
+              </div>
+              <span class="state-screen__code state-screen__code--ok">STATE / ORDER_CONFIRMED</span>
+              <h1 class="state-screen__title" id="successHeading">ORDER CONFIRMED</h1>
+              <p class="state-screen__desc" id="successSubtitle">
+                Receipt dispatched. Your studio order is now queued for fulfillment.
+              </p>
+
+              <div class="receipt-card" id="receiptCard"></div>
+
+              <div class="state-screen__actions">
+                <button class="btn-ghost hover-sound" type="button" id="downloadReceiptBtn">
+                  ↓ DOWNLOAD RECEIPT (.TXT)
+                </button>
+                <button class="btn-primary hover-sound" type="button" id="newCheckoutBtn">
+                  <span>START NEW CHECKOUT</span>
+                  <span>↺</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+               STEP 7: ERROR STATES (PAYMENT FAILED / NETWORK ERROR)
+          ==================================================== -->
+          <section class="panel step-view" id="view-error" aria-labelledby="errorHeading" hidden>
+            <div class="state-screen state-screen--error">
+              <div class="error-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="56" height="56" fill="none">
+                  <polygon points="32,8 58,52 6,52" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M32 24V37" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" />
+                  <circle cx="32" cy="44" r="1.5" fill="currentColor" />
+                </svg>
+              </div>
+              <span class="state-screen__code state-screen__code--err" id="errorCodeBadge">ERR_PAYMENT_DECLINED</span>
+              <h1 class="state-screen__title" id="errorHeading">AUTHORIZATION DECLINED</h1>
+              <p class="state-screen__desc" id="errorMessage">
+                Your card issuer declined the authorization request. No funds were captured and your form details are preserved.
+              </p>
+
+              <div class="error-diagnostics" id="errorDiagnostics"></div>
+
+              <div class="state-screen__actions">
+                <button class="btn-primary hover-sound" type="button" id="retryOrderBtn">
+                  <span>RETRY AUTHORIZATION</span>
+                  <span>↺</span>
+                </button>
+                <button class="btn-ghost hover-sound" type="button" id="editPaymentFromErrBtn">
+                  ← CHANGE PAYMENT METHOD
+                </button>
+                <button class="btn-ghost hover-sound" type="button" id="switchToBankBtn">
+                  USE BANK TRANSFER
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN: PERSISTENT ORDER SUMMARY -->
+        <aside class="checkout-sidebar" id="checkoutSidebar" aria-label="Order Summary">
+          <div class="summary-card">
+            <button class="summary-card__toggle hover-sound" type="button" id="summaryMobileToggle" aria-expanded="true">
+              <span class="summary-card__toggle-left">
+                <span class="summary-card__kicker">ORDER SUMMARY</span>
+                <span class="summary-card__item-count" id="summaryItemCount">03 ITEMS</span>
+              </span>
+              <span class="summary-card__toggle-right">
+                <span class="summary-card__mobile-total" id="summaryMobileTotal">$0.00</span>
+                <span class="summary-card__chevron" aria-hidden="true">▾</span>
+              </span>
+            </button>
+
+            <div class="summary-card__body" id="summaryBody">
+              <div class="summary-items" id="summaryItems"></div>
+
+              <!-- Promo Code Input -->
+              <form class="promo-form" id="promoForm" novalidate>
+                <label class="field__label" for="promoInput">PROMO / STUDIO CODE</label>
+                <div class="promo-form__row">
+                  <input class="field__input field__input--mono" id="promoInput" type="text" placeholder="BEFORE10 or STUDIO20" autocomplete="off" />
+                  <button class="btn-ghost hover-sound" type="submit" id="applyPromoBtn" disabled>APPLY</button>
+                </div>
+                <p class="promo-form__msg" id="promoMsg" aria-live="polite"></p>
+                <div class="promo-active is-hidden" id="promoActiveChip">
+                  <span id="promoActiveText">BEFORE10 (-10%)</span>
+                  <button class="promo-active__remove hover-sound" type="button" id="removePromoBtn" aria-label="Remove promo code">×</button>
+                </div>
+              </form>
+
+              <!-- Totals Breakdown -->
+              <dl class="totals">
+                <div class="totals__row">
+                  <dt>SUBTOTAL</dt>
+                  <dd class="mono" id="sumSubtotal">$0.00</dd>
+                </div>
+                <div class="totals__row is-hidden" id="sumDiscountRow">
+                  <dt>DISCOUNT</dt>
+                  <dd class="mono totals__discount" id="sumDiscount">-$0.00</dd>
+                </div>
+                <div class="totals__row">
+                  <dt>SHIPPING</dt>
+                  <dd class="mono" id="sumShipping">FREE</dd>
+                </div>
+                <div class="totals__row">
+                  <dt>EST. TAX (10%)</dt>
+                  <dd class="mono" id="sumTax">$0.00</dd>
+                </div>
+                <div class="totals__row totals__row--grand">
+                  <dt>TOTAL DUE</dt>
+                  <dd class="mono" id="sumTotal">$0.00</dd>
+                </div>
+              </dl>
+
+              <div class="trust-foot">
+                <span>256-BIT SSL</span>
+                <span>•</span>
+                <span>30-DAY RETURN</span>
+                <span>•</span>
+                <span>::BEFORE STUDIO</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="checkout-footer">
+      <div class="fineprint">© 2026 Nemanja Milin — ::BEFORE SOLUTIONS · Digital Product Interface</div>
+      <div class="checkout-footer__meta">
+        <span>PROMO CODES: <strong>BEFORE10</strong> / <strong>STUDIO20</strong></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- TOAST STACK -->
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>
