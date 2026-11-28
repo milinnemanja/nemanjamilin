@@ -79,7 +79,7 @@
         </div>
 
         <div class="shift-bar__right">
-          <div class="legend" aria-label="Timeline color legend">
+          <div class="legend" id="timelineLegend" aria-label="Timeline color legend">
             <span class="legend__item"><span class="swatch swatch--work"></span>PRODUCTION WORKING</span>
             <span class="legend__item"><span class="swatch swatch--error"></span>SYSTEM ERROR / STOP</span>
             <span class="legend__item"><span class="swatch swatch--lunch"></span>LUNCH BREAK</span>
@@ -154,25 +154,52 @@
             </header>
 
             <form class="event-form" id="eventForm" novalidate>
-              <!-- Status / Category Selection -->
-              <div class="status-selector" role="radiogroup" aria-label="Event type">
-                <label class="status-option status-option--error is-selected hover-sound">
-                  <input type="radio" name="eventType" value="error" checked />
-                  <span class="swatch swatch--error"></span>
-                  <span>SYSTEM ERROR / STOP</span>
-                </label>
+              <!-- Status / Category Selection + Add New Option -->
+              <div class="category-block">
+                <div class="category-block__head">
+                  <span class="field__label">EVENT CATEGORY</span>
+                  <button class="btn-mini hover-sound" type="button" id="toggleCustomOptionBtn" aria-expanded="false">
+                    + NEW OPTION
+                  </button>
+                </div>
 
-                <label class="status-option status-option--lunch hover-sound">
-                  <input type="radio" name="eventType" value="lunch" />
-                  <span class="swatch swatch--lunch"></span>
-                  <span>LUNCH BREAK</span>
-                </label>
+                <div class="status-selector" id="statusSelector" role="radiogroup" aria-label="Event type"></div>
 
-                <label class="status-option status-option--work hover-sound">
-                  <input type="radio" name="eventType" value="work" />
-                  <span class="swatch swatch--work"></span>
-                  <span>PRODUCTION NOTE</span>
-                </label>
+                <!-- Inline New Option & 12-Color Triadic Palette Creator -->
+                <div class="custom-option-drawer is-hidden" id="customOptionDrawer">
+                  <div class="custom-option-drawer__head">
+                    <span class="field__label">CREATE CUSTOM EVENT OPTION</span>
+                    <span class="mono custom-color-readout" id="selectedColorHex">#10B981 · TRIAD EMERALD</span>
+                  </div>
+
+                  <div class="custom-option-drawer__row">
+                    <input
+                      class="comment-input"
+                      id="customTypeName"
+                      type="text"
+                      maxlength="32"
+                      placeholder="Option name (e.g. Maintenance, Tool Change, QA Check)"
+                    />
+                  </div>
+
+                  <div class="palette-section">
+                    <div class="palette-section__head">
+                      <span class="field__label">12-COLOR TRIADIC PALETTE (FROM #6D4AFF PURPLE)</span>
+                      <span class="palette-poles mono">PURPLE · EMERALD · CORAL</span>
+                    </div>
+                    <div class="triadic-palette" id="triadicPaletteGrid" role="radiogroup" aria-label="12 triadic color swatches"></div>
+                  </div>
+
+                  <p class="form-error is-hidden" id="customOptionError" role="alert"></p>
+
+                  <div class="custom-option-drawer__actions">
+                    <button class="btn-ghost btn-ghost--sm hover-sound" type="button" id="cancelCustomOptionBtn">CANCEL</button>
+                    <button class="btn-primary btn-primary--sm hover-sound" type="button" id="saveCustomOptionBtn">
+                      <span>SAVE OPTION</span>
+                      <span>+</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <!-- Time Inputs + Interactive Full Clock Picker -->

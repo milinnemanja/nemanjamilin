@@ -8,7 +8,24 @@
 
   const HOVER_SOUND_URL = "../../tap_01.wav";
   const STORAGE_KEY = "before_timeline_tracker_v1";
+  const CUSTOM_TYPES_KEY = "before_timeline_custom_types_v1";
   const TZ = "Europe/Belgrade";
+
+  // 12 Default Triadic Colors derived from Studio Purple (#6d4aff / 252° -> 252°, 132°, 12°)
+  const TRIADIC_PALETTE = [
+    { hex: "#6d4aff", name: "STUDIO PURPLE", pole: "P" },
+    { hex: "#8b5cf6", name: "ELECTRIC VIOLET", pole: "P" },
+    { hex: "#a855f7", name: "ORCHID PURPLE", pole: "P" },
+    { hex: "#4f46e5", name: "DEEP INDIGO", pole: "P" },
+    { hex: "#10b981", name: "TRIAD EMERALD", pole: "E" },
+    { hex: "#34d399", name: "MINT SIGNAL", pole: "E" },
+    { hex: "#14b8a6", name: "TEAL PULSE", pole: "E" },
+    { hex: "#84cc16", name: "LIME SHIFT", pole: "E" },
+    { hex: "#f97316", name: "TRIAD ORANGE", pole: "C" },
+    { hex: "#fb7185", name: "CORAL ROSE", pole: "C" },
+    { hex: "#f59e0b", name: "AMBER ALERT", pole: "C" },
+    { hex: "#eab308", name: "GOLD WARNING", pole: "C" }
+  ];
 
   const SHIFTS = {
     1: {
@@ -40,11 +57,11 @@
     }
   };
 
-  const TYPE_META = {
-    error: { label: "SYSTEM ERROR / STOP", short: "ERROR" },
-    lunch: { label: "LUNCH BREAK", short: "LUNCH BREAK" },
-    work: { label: "PRODUCTION WORKING", short: "PRODUCTION" }
-  };
+  const BUILTIN_TYPES = [
+    { id: "error", label: "SYSTEM ERROR / STOP", short: "ERROR", color: "#ef4444", isCustom: false },
+    { id: "lunch", label: "LUNCH BREAK", short: "LUNCH BREAK", color: "#ffffff", isCustom: false },
+    { id: "work", label: "PRODUCTION WORKING", short: "PRODUCTION", color: "#6d4aff", isCustom: false }
+  ];
 
   // === Time & Date Helpers ===
   const pad2 = (n) => String(n).padStart(2, "0");
@@ -266,12 +283,46 @@
     }
   }
 
+  function loadCustomTypes() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_TYPES_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {
+      // ignore storage errors
+    }
+    return [];
+  }
+
+  function saveCustomTypes(types) {
+    try {
+      localStorage.setItem(CUSTOM_TYPES_KEY, JSON.stringify(types));
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  function getContrastText(hex) {
+    const clean = (hex || "#6d4aff").replace("#", "");
+    const r = parseInt(clean.slice(0, 2), 16) || 0;
+    const g = parseInt(clean.slice(2, 4), 16) || 0;
+    const b = parseInt(clean.slice(4, 6), 16) || 0;
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.62 ? "#111111" : "#ffffff";
+  }
+
   // === State ===
   const initialNow = getNowParts();
   const initialActive = getActiveShiftInfo(initialNow);
 
   const state = {
     logs: loadStorage(initialNow),
+    customTypes: loadCustomTypes(),
+    selectedEventType: "error",
+    selectedPaletteColor: TRIADIC_PALETTE[4].hex, // #10b981 Triad Emerald default
+    customDrawerOpen: false,
     selectedDate: initialActive.opDateKey,
     selectedShift: initialActive.shiftId,
     calendarYear: Number(initialActive.opDateKey.split("-")[0]),
@@ -284,6 +335,22 @@
     endTime: SHIFTS[initialActive.shiftId].defaultEnd
   };
 
+  function getAllEventTypes() {
+    return [...BUILTIN_TYPES, ...state.customTypes];
+  }
+
+  function getTypeMeta(typeId, fallbackColor = null) {
+    const found = getAllEventTypes().find((t) => t.id === typeId);
+    if (found) return found;
+    return {
+      id: typeId,
+      label: "CUSTOM EVENT",
+      short: "CUSTOM",
+      color: fallbackColor || "#8b5cf6",
+      isCustom: true
+    };
+  }
+
   // === DOM Cache ===
   const el = {
     liveClockSeconds: document.getElementById("liveClockSeconds"),
@@ -293,6 +360,7 @@
     soundToggleBtn: document.getElementById("soundToggleBtn"),
 
     shiftTabs: Array.from(document.querySelectorAll(".shift-tab")),
+    timelineLegend: document.getElementById("timelineLegend"),
     timelineContextKicker: document.getElementById("timelineContextKicker"),
     timelineTitle: document.getElementById("timelineTitle"),
     timelineHours: document.getElementById("timelineHours"),
@@ -310,7 +378,15 @@
 
     eventForm: document.getElementById("eventForm"),
     formModeBadge: document.getElementById("formModeBadge"),
-    statusOptions: Array.from(document.querySelectorAll(".status-option")),
+    statusSelector: document.getElementById("statusSelector"),
+    toggleCustomOptionBtn: document.getElementById("toggleCustomOptionBtn"),
+    customOptionDrawer: document.getElementById("customOptionDrawer"),
+    customTypeName: document.getElementById("customTypeName"),
+    selectedColorHex: document.getElementById("selectedColorHex"),
+    triadicPaletteGrid: document.getElementById("triadicPaletteGrid"),
+    customOptionError: document.getElementById("customOptionError"),
+    cancelCustomOptionBtn: document.getElementById("cancelCustomOptionBtn"),
+    saveCustomOptionBtn: document.getElementById("saveCustomOptionBtn"),
     startTimeCard: document.getElementById("startTimeCard"),
     endTimeCard: document.getElementById("endTimeCard"),
     startTimeInput: document.getElementById("startTimeInput"),
@@ -447,13 +523,15 @@
     let workMins = 0;
     let errorMins = 0;
     let lunchMins = 0;
+    let customMins = 0;
     minuteState.forEach((st) => {
       if (st === "work") workMins++;
       else if (st === "error") errorMins++;
       else if (st === "lunch") lunchMins++;
+      else if (st !== null) customMins++;
     });
 
-    const totalTracked = workMins + errorMins + lunchMins;
+    const totalTracked = workMins + errorMins + lunchMins + customMins;
     const uptime = totalTracked > 0 ? Math.round(((totalTracked - errorMins) / totalTracked) * 100) : 100;
 
     return {
@@ -461,14 +539,23 @@
       isFuture: isFutureDay || isFutureShiftToday,
       elapsedRel,
       events,
-      workMins,
+      workMins: workMins + customMins,
       errorMins,
       lunchMins,
       uptime
     };
   }
 
+  function renderLegend() {
+    el.timelineLegend.innerHTML = getAllEventTypes().map((t) => {
+      const cls = t.isCustom ? "" : `swatch--${t.id}`;
+      const style = t.isCustom ? `style="background:${t.color};box-shadow:0 0 8px ${t.color}66"` : "";
+      return `<span class="legend__item"><span class="swatch ${cls}" ${style}></span>${escapeHtml(t.label)}</span>`;
+    }).join("");
+  }
+
   function renderTimeline() {
+    renderLegend();
     const nowParts = getNowParts();
     const active = getActiveShiftInfo(nowParts);
     const shift = SHIFTS[state.selectedShift];
@@ -512,12 +599,13 @@
 
     // Build visual segments:
     // 1. Base purple working bar from 0 to elapsedRel
-    // 2. Explicit events layered cleanly on top (work / error / lunch)
+    // 2. Explicit events layered cleanly on top (work / error / lunch / custom)
     const segments = [];
     if (info.elapsedRel > 0) {
       segments.push({
         id: null,
         type: "work",
+        color: "#6d4aff",
         startRel: 0,
         endRel: info.elapsedRel,
         startStr: shift.hours[0],
@@ -530,9 +618,12 @@
       const s = toShiftRelMin(ev.start, state.selectedShift);
       const e = toShiftRelMin(ev.end, state.selectedShift);
       if (s === null || e === null || e <= s) return;
+      const meta = getTypeMeta(ev.type, ev.customColor);
       segments.push({
         id: ev.id,
         type: ev.type,
+        color: meta.color,
+        isCustom: meta.isCustom,
         startRel: s,
         endRel: e,
         startStr: ev.start,
@@ -545,11 +636,16 @@
       const left = (seg.startRel / 480) * 100;
       const width = ((seg.endRel - seg.startRel) / 480) * 100;
       const dur = Math.round(seg.endRel - seg.startRel);
+      const builtinCls = !seg.isCustom ? `tl-seg--${seg.type}` : "";
+      const customStyle = seg.isCustom
+        ? `background:linear-gradient(180deg, ${seg.color} 0%, ${seg.color}cc 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);z-index:2;`
+        : "";
       return `<div
-        class="tl-seg tl-seg--${seg.type}"
-        style="left:${left}%;width:${Math.max(width, 0.35)}%"
+        class="tl-seg ${builtinCls}"
+        style="left:${left}%;width:${Math.max(width, 0.35)}%;${customStyle}"
         data-seg-id="${escapeHtml(seg.id || "")}"
-        data-seg-type="${seg.type}"
+        data-seg-type="${escapeHtml(seg.type)}"
+        data-seg-color="${escapeHtml(seg.color)}"
         data-seg-range="${escapeHtml(seg.startStr)} – ${escapeHtml(seg.endStr)}"
         data-seg-dur="${formatDuration(dur)}"
         data-seg-comment="${escapeHtml(seg.comment)}"
@@ -575,14 +671,15 @@
       return;
     }
     const type = seg.dataset.segType;
-    const colorMap = { work: "#9d85ff", error: "#f87171", lunch: "#ffffff" };
+    const meta = getTypeMeta(type, seg.dataset.segColor);
+    const labelColor = type === "work" ? "#9d85ff" : meta.color;
     const trackRect = el.timelineTrack.getBoundingClientRect();
     const x = Math.max(110, Math.min(trackRect.width - 110, e.clientX - trackRect.left));
 
     el.timelineTooltip.style.left = `${x}px`;
     el.timelineTooltip.innerHTML = `
       <div class="timeline-tooltip__head">
-        <span style="color:${colorMap[type]};font-weight:700">${TYPE_META[type].short}</span>
+        <span style="color:${escapeHtml(labelColor)};font-weight:700">${escapeHtml(meta.short)}</span>
         <span>${seg.dataset.segRange} (${seg.dataset.segDur})</span>
       </div>
       <div class="timeline-tooltip__msg">${escapeHtml(seg.dataset.segComment)}</div>
@@ -624,15 +721,22 @@
       const s = toShiftRelMin(ev.start, state.selectedShift) ?? 0;
       const e = toShiftRelMin(ev.end, state.selectedShift) ?? 0;
       const dur = Math.max(0, e - s);
+      const meta = getTypeMeta(ev.type, ev.customColor);
+      const barCls = !meta.isCustom ? `event-row__bar--${ev.type}` : "";
+      const barStyle = meta.isCustom ? `style="background:${escapeHtml(meta.color)}"` : "";
+      const badgeCls = !meta.isCustom ? `event-row__badge--${ev.type}` : "";
+      const badgeStyle = meta.isCustom
+        ? `style="background:${escapeHtml(meta.color)};border-color:${escapeHtml(meta.color)};color:${getContrastText(meta.color)};font-weight:700"`
+        : "";
       return `
         <article class="event-row" data-event-id="${escapeHtml(ev.id)}" role="listitem">
-          <span class="event-row__bar event-row__bar--${ev.type}" aria-hidden="true"></span>
+          <span class="event-row__bar ${barCls}" ${barStyle} aria-hidden="true"></span>
           <div class="event-row__time">
             <span class="event-row__range">${escapeHtml(ev.start)} – ${escapeHtml(ev.end)}</span>
             <span class="event-row__dur">${formatDuration(dur)}</span>
           </div>
           <div class="event-row__body">
-            <span class="event-row__badge event-row__badge--${ev.type}">${TYPE_META[ev.type].label}</span>
+            <span class="event-row__badge ${badgeCls}" ${badgeStyle}>${escapeHtml(meta.label)}</span>
             <span class="event-row__comment">${escapeHtml(ev.comment)}</span>
           </div>
           <div class="event-row__actions">
@@ -832,23 +936,135 @@
     });
   });
 
-  // === Form Controls & Submit ===
-  document.querySelectorAll('input[name="eventType"]').forEach((r) => {
-    r.addEventListener("change", (e) => {
-      el.statusOptions.forEach((opt) => {
-        opt.classList.toggle("is-selected", opt.querySelector("input").value === e.target.value);
-      });
-    });
+  // === Category Selector & 12-Color Triadic Palette ===
+  function renderStatusSelector() {
+    const types = getAllEventTypes();
+    if (!types.some((t) => t.id === state.selectedEventType)) {
+      state.selectedEventType = "error";
+    }
+
+    el.statusSelector.innerHTML = types.map((t) => {
+      const isSelected = state.selectedEventType === t.id;
+      const cls = !t.isCustom ? `status-option--${t.id}` : "";
+      const borderStyle = isSelected && t.isCustom ? `style="border-color:${escapeHtml(t.color)}"` : "";
+      const swatchCls = !t.isCustom ? `swatch--${t.id}` : "";
+      const swatchStyle = t.isCustom ? `style="background:${escapeHtml(t.color)};box-shadow:0 0 8px ${escapeHtml(t.color)}66"` : "";
+
+      return `
+        <label class="status-option ${cls} ${isSelected ? "is-selected" : ""} hover-sound" ${borderStyle}>
+          <input type="radio" name="eventType" value="${escapeHtml(t.id)}" ${isSelected ? "checked" : ""} />
+          <span class="status-option__main">
+            <span class="swatch ${swatchCls}" ${swatchStyle}></span>
+            <span class="status-option__label">${escapeHtml(t.label)}</span>
+          </span>
+          ${t.isCustom ? `<button class="status-option__remove hover-sound" type="button" data-remove-type="${escapeHtml(t.id)}" aria-label="Delete ${escapeHtml(t.label)}">×</button>` : ""}
+        </label>
+      `;
+    }).join("");
+  }
+
+  function renderTriadicPalette() {
+    const activeSwatch = TRIADIC_PALETTE.find((c) => c.hex === state.selectedPaletteColor) || TRIADIC_PALETTE[0];
+    el.selectedColorHex.textContent = `${activeSwatch.hex.toUpperCase()} · ${activeSwatch.name}`;
+
+    el.triadicPaletteGrid.innerHTML = TRIADIC_PALETTE.map((c) => {
+      const selected = c.hex === state.selectedPaletteColor;
+      return `
+        <button
+          class="triad-swatch hover-sound ${selected ? "is-selected" : ""}"
+          type="button"
+          data-palette-hex="${c.hex}"
+          data-pole="${c.pole}"
+          style="background:${c.hex}"
+          title="${c.name} (${c.hex})"
+          aria-label="${c.name}"
+          aria-pressed="${String(selected)}"
+        ></button>
+      `;
+    }).join("");
+  }
+
+  function setCustomDrawerOpen(open) {
+    state.customDrawerOpen = open;
+    el.customOptionDrawer.classList.toggle("is-hidden", !open);
+    el.toggleCustomOptionBtn.setAttribute("aria-expanded", String(open));
+    el.customOptionError.classList.add("is-hidden");
+    if (open) {
+      renderTriadicPalette();
+      el.customTypeName.focus();
+    }
+  }
+
+  el.toggleCustomOptionBtn.addEventListener("click", () => {
+    setCustomDrawerOpen(!state.customDrawerOpen);
+  });
+
+  el.cancelCustomOptionBtn.addEventListener("click", () => {
+    el.customTypeName.value = "";
+    setCustomDrawerOpen(false);
+  });
+
+  el.triadicPaletteGrid.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-palette-hex]");
+    if (!btn) return;
+    state.selectedPaletteColor = btn.dataset.paletteHex;
+    renderTriadicPalette();
+  });
+
+  el.saveCustomOptionBtn.addEventListener("click", () => {
+    const rawName = el.customTypeName.value.trim();
+    if (!rawName) {
+      el.customOptionError.textContent = "Enter a name for the new event option.";
+      el.customOptionError.classList.remove("is-hidden");
+      el.customTypeName.focus();
+      return;
+    }
+
+    const label = rawName.toUpperCase();
+    const newType = {
+      id: `custom-${Date.now()}`,
+      label,
+      short: label.length > 16 ? label.slice(0, 16) : label,
+      color: state.selectedPaletteColor,
+      isCustom: true
+    };
+
+    state.customTypes.push(newType);
+    saveCustomTypes(state.customTypes);
+    state.selectedEventType = newType.id;
+    el.customTypeName.value = "";
+    setCustomDrawerOpen(false);
+    renderStatusSelector();
+    renderLegend();
+    showToast(`ADDED OPTION: ${label}`);
+  });
+
+  el.statusSelector.addEventListener("click", (e) => {
+    const remBtn = e.target.closest("[data-remove-type]");
+    if (remBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = remBtn.dataset.removeType;
+      state.customTypes = state.customTypes.filter((t) => t.id !== id);
+      saveCustomTypes(state.customTypes);
+      if (state.selectedEventType === id) state.selectedEventType = "error";
+      renderStatusSelector();
+      renderLegend();
+      showToast("CUSTOM OPTION REMOVED");
+    }
+  });
+
+  el.statusSelector.addEventListener("change", (e) => {
+    if (e.target.name === "eventType") {
+      state.selectedEventType = e.target.value;
+      renderStatusSelector();
+    }
   });
 
   document.querySelectorAll("[data-preset-text]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const type = btn.dataset.presetType;
-      const radio = document.querySelector(`input[name="eventType"][value="${type}"]`);
-      if (radio) {
-        radio.checked = true;
-        radio.dispatchEvent(new Event("change"));
-      }
+      state.selectedEventType = btn.dataset.presetType;
+      renderStatusSelector();
       el.eventComment.value = btn.dataset.presetText;
       el.formError.classList.add("is-hidden");
     });
@@ -878,7 +1094,8 @@
     const sRel = toShiftRelMin(el.startTimeInput.value, state.selectedShift);
     const eRel = toShiftRelMin(el.endTimeInput.value, state.selectedShift);
     const comment = el.eventComment.value.trim();
-    const type = document.querySelector('input[name="eventType"]:checked')?.value || "error";
+    const type = state.selectedEventType || "error";
+    const meta = getTypeMeta(type);
 
     if (sRel === null || eRel === null) {
       el.formError.textContent = `Both times must be within ${shift.name} (${shift.label}).`;
@@ -902,21 +1119,26 @@
     const normEnd = relMinToTimeStr(eRel, state.selectedShift);
 
     const events = getShiftEvents();
+    const payload = {
+      type,
+      customColor: meta.isCustom ? meta.color : undefined,
+      start: normStart,
+      end: normEnd,
+      comment
+    };
+
     if (state.editingId) {
       const idx = events.findIndex((x) => x.id === state.editingId);
       if (idx !== -1) {
-        events[idx] = { ...events[idx], type, start: normStart, end: normEnd, comment };
+        events[idx] = { ...events[idx], ...payload };
       }
       showToast("SHIFT ENTRY UPDATED");
     } else {
       events.push({
         id: `ev-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-        type,
-        start: normStart,
-        end: normEnd,
-        comment
+        ...payload
       });
-      showToast(`${TYPE_META[type].short} LOGGED (${normStart}–${normEnd})`);
+      showToast(`${meta.short} LOGGED (${normStart}–${normEnd})`);
     }
 
     setShiftEvents(state.selectedDate, state.selectedShift, events);
@@ -934,11 +1156,8 @@
       el.formModeBadge.textContent = "EDITING ENTRY";
       el.submitEventLabel.textContent = "SAVE CHANGES";
       el.cancelEditBtn.classList.remove("is-hidden");
-      const radio = document.querySelector(`input[name="eventType"][value="${ev.type}"]`);
-      if (radio) {
-        radio.checked = true;
-        radio.dispatchEvent(new Event("change"));
-      }
+      state.selectedEventType = ev.type;
+      renderStatusSelector();
       state.startTime = ev.start;
       state.endTime = ev.end;
       el.startTimeInput.value = ev.start;
@@ -1032,8 +1251,11 @@
       const count = info.events.length;
       return `
         <button class="cal-shift-mini hover-sound ${state.selectedShift === sid ? "is-active" : ""}" type="button" data-cal-shift="${sid}">
-          <span><strong>${SHIFTS[sid].name}</strong> <span class="mono" style="color:var(--muted-2)">${SHIFTS[sid].label}</span></span>
-          <span class="mono">${count} LOGS · ${info.uptime}%</span>
+          <span class="cal-shift-mini__left">
+            <strong class="cal-shift-mini__name">${SHIFTS[sid].name}</strong>
+            <span class="cal-shift-mini__hours mono">${SHIFTS[sid].label}</span>
+          </span>
+          <span class="cal-shift-mini__stats mono">${count} ${count === 1 ? "LOG" : "LOGS"} · ${info.uptime}%</span>
         </button>
       `;
     }).join("");
@@ -1133,6 +1355,8 @@
 
   // === Initialize ===
   renderClockStaticTicks();
+  renderStatusSelector();
+  renderTriadicPalette();
   resetFormToNew();
   tickLiveClock();
   renderAll();
